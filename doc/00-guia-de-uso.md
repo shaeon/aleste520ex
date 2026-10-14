@@ -331,6 +331,7 @@ Proyectos de Quartus (guardados con **Quartus Prime 22.1 Lite**):
 | Placa | Proyecto | FPGA | Audio |
 |---|---|---|---|
 | Poseidon | `poseidon/aleste_poseidon.qpf` | EP4CGX150 | I2S |
+| MiST | `mist/aleste_mist.qpf` | EP3C25 (Cyclone III) | sigma-delta (jack de la placa) |
 | SiDi | `sidi/aleste_sidi.qpf` | EP4CE22 | sigma-delta (jack de la placa) |
 | Calypso | `calypso/aleste_calypso.qpf` | 10CL025 (Cyclone 10 LP) | I2S |
 

@@ -105,6 +105,16 @@ En la raiz de la SD, con el nombre del core:
 optimizacion por area (98 % de los elementos logicos) y cumple los tiempos en
 los tres modelos (54 MHz con +1,4 ns tras rehacer el calendario del reloj).
 
+## MiST
+
+`mist/aleste_mist.qpf`: Cyclone III EP3C25E144C8, reloj de 27 MHz (los mismos
+PLL que la SiDi: 108/54/27 MHz y 80 MHz para el video), VGA de 6 bits, audio
+sigma-delta (`dac.vhd`). Sin entrada de audio: la cinta, solo con ficheros
+CDT/TZX. Pines y ajustes de la placa tomados del port de NewBrain a la MiST.
+Macros MIST, DELTASIGMA_AUDIO, NO_DIRECT_UPLOAD y BIG_OSD. La EP3C25 tiene unos
+24.600 elementos logicos (como la Calypso): optimizacion por area, como en la
+SiDi.
+
 ## Calypso
 
 `calypso/aleste_calypso.qpf`: Cyclone 10 LP 10CL025YU256C8G (placa CYC1000),
@@ -119,6 +129,10 @@ del core (bits 23-22 de la direccion de bytes) en ventanas: RAM 2 MB en
 000000h, ROM del modo CPC 1 MB en 200000h, arranque nativo 1 MB en 300000h y
 cinta 4 MB en 400000h. En modo nativo, mas de 1-2 MB por region se repetiria
 (no se usa para el 520EX).
+
+La familia de la FPGA del registro DDR que saca el reloj de la SDRAM
+(`FAMILIA` en `aleste_mist_top.sv`) es "Cyclone 10 LP" en la Calypso (antes
+caia en "Cyclone IV GX", la de la Poseidon).
 
 El proyecto sale del de la SiDi quitando solo las asignaciones que se
 sustituyen (familia, dispositivo, macros, ficheros fuente y pines);

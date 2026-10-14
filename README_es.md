@@ -12,6 +12,7 @@ la familia MiST. Se basa en **Aleste LX** de hww
 | Placa | FPGA | Proyecto | Audio |
 |---|---|---|---|
 | Poseidon | Cyclone IV GX EP4CGX150 | `poseidon/aleste_poseidon.qpf` | I2S |
+| MiST | Cyclone III EP3C25 | `mist/aleste_mist.qpf` | sigma-delta |
 | SiDi | Cyclone IV E EP4CE22 | `sidi/aleste_sidi.qpf` | sigma-delta |
 | Calypso (CYC1000) | Cyclone 10 LP 10CL025 | `calypso/aleste_calypso.qpf` | I2S |
 

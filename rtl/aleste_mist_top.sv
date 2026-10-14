@@ -397,6 +397,8 @@ assign SDRAM_DQMH = sdram_dqm[1];
 localparam FAMILIA = "Cyclone III";
 `elsif SIDI
 localparam FAMILIA = "Cyclone IV E";
+`elsif CALYPSO
+localparam FAMILIA = "Cyclone 10 LP";
 `else
 localparam FAMILIA = "Cyclone IV GX";
 `endif
