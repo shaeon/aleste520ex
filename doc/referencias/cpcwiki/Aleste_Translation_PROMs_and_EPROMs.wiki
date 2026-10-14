@@ -1,0 +1,472 @@
+Aside from the BIOS EPROM, the [[Aleste 520EX]] contains five Translation PROMs and EPROMs. They aren't accessible as memory to the CPU, but rather used as "logic look-up tables", translating incoming signals (through address inputs) to to outgoing signals (through data outputs).
+
+== Aleste COLDAT eprom (Gate Array Parameters and Upper ROM Bank) ==
+
+ Inputs:
+  A0..A7    Databus D0..D7
+  A8        CPU A13
+  A9        CPU A15
+  A10       MAPMOD     ;affects ONLY the palette bits in COLDAT
+ Outputs: (enabled only when /IORQ=Low)
+  D0..D5    XD0..XD5
+  D6        Not used (not connected)
+  D7        VRAMACC
+
+ Part A (when MAPMOD=0)
+  COLDAT Addr  CPU Addr  Content
+  0000..00FF:  5FFFh     Not used (filled with incrementing values: 00h..FFh)
+  0100..013F:  7FFFh     Gate Array 0 (palette index)
+  0140..017F:  7FFFh     Gate Array 1 (palette data)
+  0180..01BF:  7FFFh     Gate Array 2 (vmode, rom, leds)
+  01C0..01FF:  7FFFh     Gate Array 3 (rambank, etc.)
+  0200..02FF:  DFFFh     Upper ROM Bank
+  0300..03FF:  FABFh     Ext Port (filled with incrementing values: 00h..FFh)
+ Part B (when MAPMOD=1)
+  0400..04FF:  5FFFh     Not used                        (same as MAPMODE=0)
+  0500..053F:  7FFFh     Gate Array 0 (palette index)    (same as MAPMODE=0)
+  0540..057F:  7FFFh     Gate Array 1 (palette data)     (other than MAPMODE=0)
+  0580..05BF:  7FFFh     Gate Array 2 (vmode, rom, leds) (same as MAPMODE=0)
+  05C0..05FF:  7FFFh     Gate Array 3 (rambank, etc.)    (same as MAPMODE=0)
+  0600..06FF:  DFFFh     Upper ROM Bank                  (same as MAPMODE=0)
+  0700..07FF:  FABFh     Ext Port                        (same as MAPMODE=0)
+
+Address 7FFFh: Gate Array 0: (A13=1, A15=0, DataIn=00h..3Fh) palette index
+ 0100: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F ;-pen index
+ 0110: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F ;-border (only bit4 is relevant here)
+ 0120: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F ;\same of above
+ 0130: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F ;/(but, with bit5 set, which has no function)
+Address 7FFFh: Gate Array 1: (A13=1, A15=0, DataIn=40h..7Fh) palette data
+ When MAPMOD=0
+ 0140: 15 15 1C 1F 10 13 14 17  13 1F 0F 3F 03 33 07 37 ;\27-color palette
+ 0150: 10 1C 0C 3C 00 30 04 34  11 1D 0D 3D 01 31 05 35 ;/
+ 0160: 15 15 1C 1F 10 13 14 17  13 1F 0F 3F 03 33 07 37 ;\27-color palette (same as above)
+ 0170: 10 1C 0C 3C 00 30 04 34  11 1D 0D 3D 01 31 05 35 ;/
+ When MAPMOD=1
+ 0540: 00 10 20 30 04 14 24 34  08 18 28 38 0C 1C 2C 3C ;\
+ 0550: 01 11 21 31 05 15 25 35  09 19 29 39 0D 1D 2D 3D ; 64-color palette
+ 0560: 02 12 22 32 06 16 26 36  0A 1A 2A 3A 0E 1E 2E 3E ;
+ 0570: 03 13 23 33 07 17 27 37  0B 1B 2B 3B 0F 1F 2F 3F ;/
+Address 7FFFh: Gate Array 2: (A13=1, A15=0, DataIn=80h..BFh) vmode, rom, leds
+ 0180: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F ;\just a 1:1 translation,
+ 0190: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F ; increasing values 00h..3Fh
+ 01A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF ; (but, with bit7=set=blah)
+ 01B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF ;/
+Address 7FFFh: Gate Array 3: (A13=1, A15=0, DataIn=C0h..FFh) ram bank,
+ 01C0: 80 81 82 83 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F ;\basically incrementing
+ 01D0: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F ; values 00h..3Fh, but
+ 01E0: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F ; with bit7=1=VRAMACC in
+ 01F0: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F ;/first four values
+Address DFFFh: Upper ROM Bank: (A13=0, A15=1)
+ 0200..0207:  01 01 01 03 01 01 01 02  ;\translates bank 03h to 3 (menu), bank
+ 0208..02FF:  filled with 01           ;/07h to 2 (amsdos), others to 1 (basic)
+Address FABFh: Ext Port
+ 0300..03FF:  filled with incrementing values: 00h..FFh
+
+== Aleste MAPPER prom (Gate Array 3, RAM banking) ==
+
+This 256x4bit PROM assists Gate Array 3 (RAM banking)
+
+ Inputs:
+  A0..A1     CPU A14..A15  ;-the addressed 16K memory block
+  A2..A5,A7  M0..M4
+  A6         MAPMOD
+ Outputs:
+  D0..D3     MAP14..MAP17
+
+Addresses used when MAPMOD=0:
+ 0000: 0 1 2 3  0 1 2 7  4 5 6 7  0 3 2 7 ;-1st+2nd 64K banks (as on cpc 6128)
+ 0010: 0 4 2 3  0 5 2 3  0 6 2 3  0 7 2 3 ;-1st+2nd 64K banks (as on cpc 6128)
+ 0020: 0 1 2 3  0 1 2 7  4 5 6 7  0 3 2 7 ;-1st+2nd 64K banks (mirror of 6128)
+ 0030: 0 8 2 3  0 9 2 3  0 A 2 3  0 B 2 3 ;-1st+3rd 64K banks (as on dk'tronics)
+ 0080: 0 1 2 3  0 1 2 7  4 5 6 7  0 3 2 7 ;-1st+2nd 64K banks (mirror of 6128)
+ 0090: 0 C 2 3  0 D 2 3  0 E 2 3  0 F 2 3 ;-1st+4th 64K banks (as on dk'tronics)
+ 00A0: 0 1 2 3  0 1 2 7  4 5 6 7  0 3 2 7 ;-1st+2nd 64K banks (mirror of 6128)
+ 00B0: 0 C 2 3  0 D 2 3  0 E 2 3  0 F 2 3 ;-1st+4th 64K banks (mirror of above)
+Actually, that's more like an Inicron expansion, as than a dk'tronics one.
+
+Addresses used when MAPMOD=1:
+ 0040: 0 0 0 0  1 1 1 1  2 2 2 2  3 3 3 3 ;\
+ 0050: 4 4 4 4  5 5 5 5  6 6 6 6  7 7 7 7 ; first 256K
+ 0060: 8 8 8 8  9 9 9 9  A A A A  B B B B ;
+ 0070: C C C C  D D D D  E E E E  F F F F ;/
+ 00C0: 0 0 0 0  1 1 1 1  2 2 2 2  3 3 3 3 ;\second 256K
+ 00D0: 4 4 4 4  5 5 5 5  6 6 6 6  7 7 7 7 ; (fifth bit is handled elsewhere: bit4 is ANDed
+ 00E0: 8 8 8 8  9 9 9 9  A A A A  B B B B ; with MAPMOD and then passed to MAP18 directly)
+ 00F0: C C C C  D D D D  E E E E  F F F F ;/
+Allows to map any bank to any location (similar to the RAM "mappers" in MSX
+computers, though accessed through different I/O ports as on the MSX)
+
+== Aleste ROMRAM prom (Gate Array 2, ROM/RAM enable) ==
+
+This 256x4bit PROM assists Gate Array 2 (RAM/ROM enable)
+
+ Inputs:
+  A0  PROM0    ;\from gate array (but translated via COLDAT,
+  A1  PROM1    ;/  not the original value written by the CPU)
+  A2  CPU A14  ;\the addressed 16K memory block
+  A3  CPU A15  ;/
+  A4  CPU A0
+  A5  /MREQ
+  A6  /RD
+  A7  RAMDIS   ;-RAMDIS pin on expansion port
+ Outputs:
+  D0  BUFFER0  ;set LOW on read from even RAM address (16bit-to-8bit bus)
+  D1  BUFFER1  ;set LOW on read from odd  RAM address (16bit-to-8bit bus)
+  D2  /ROMEN   ;ROM enable (note: ROMDIS is handled elsewhere)
+  D3  /RAMEN   ;RAM enable
+
+ Page: 0000h    4000h    8000h    C000h
+ ----------------------------------------
+ 0000: B 6 B 6  6 6 6 6  6 6 6 6  B B 6 6      ;even addresses
+ 0010: B 5 B 5  5 5 5 5  5 5 5 5  B B 5 5      ;odd addresses
+ 0020: F F F F  F F F F  F F F F  F F F F  ;\inactive because /MREQ=high
+ 0030: F F F F  F F F F  F F F F  F F F F  ;/
+ 0040: F F F F  F F F F  F F F F  F F F F  ;\inactive because /RD=high
+ 0050: F F F F  F F F F  F F F F  F F F F  ;/
+ 0060: F F F F  F F F F  F F F F  F F F F  ;\inactive because /MREQ=high and /RD=high
+ 0070: F F F F  F F F F  F F F F  F F F F  ;/
+ 0080: B 7 B 7  7 7 7 7  7 7 7 7  B B 7 7  ;\
+ 0090: B 7 B 7  7 7 7 7  7 7 7 7  B B 7 7  ; same as above, but BUFFER0 and BUFFER1 bits all SET
+ 00A0: F F F F  F F F F  F F F F  F F F F  ; (reading from internal RAM forcefully disabled via
+ 00B0: F F F F  F F F F  F F F F  F F F F  ; RAMDIS signal from expansion port)
+ 00C0: F F F F  F F F F  F F F F  F F F F  ; (however WRITING to RAM isn't disabled, the "7" means
+ 00D0: F F F F  F F F F  F F F F  F F F F  ; signal /RAMEN=LOW, so writing is possible)
+ 00E0: F F F F  F F F F  F F F F  F F F F  ;
+ 00F0: F F F F  F F F F  F F F F  F F F F  ;/
+
+== Aleste VDKEY eprom (video and keyboard) ==
+
+This 2Kx8bit EPROM is used for Video and Keyboard translation.
+
+ Inputs:
+  A0..A8   9bit scanline counter
+  A9       HSYNC period (duration counted as 1M div 8 or so)
+  A10      not used (wired to GND)
+ Outputs:
+  D0       video SYNC* (hsync+vsync, passed to monitor SYNC)
+  D1       video HY*   (vsync, passed to ppi)
+  D2       video SINT* (probably the 300Hz interrupt?)
+  D3       not used    (not connected) (bit3 is always "1" in ROM-image)
+  D4..D7   keyboard
+
+Lower Data bits in VDKEY (the Video related part):
+
+ 0000..001F: B B E A A A B B  . . . . . . . .  . . . . . . . .  . . . . D . . .
+ 0020..003F: . . . . . . . .  . . . . . . . .  . . . . . . D .  . . . . . . . .
+ 0040..005F: . . . . . . . .  . . . . . . . .  D . . . . . . .  . . . . . . . .
+ 0060..007F: . . . . . . . .  . . D . . . . .  . . . . . . . .  . . . . . . . .
+ 0080..009F: . . . . D . . .  . . . . . . . .  . . . . . . . .  . . . . . . D .
+ 00A0..00BF: . . . . . . . .  . . . . . . . .  . . . . . . . .  D . . . . . . .
+ 00C0..00DF: . . . . . . . .  . . . . . . . .  . . D . . . . .  . . . . . . . .
+ 00E0..00FF: . . . . . . . .  . . . . D . . .  . . . . . . . .  . . . . . . . .
+ 0100..011F: . . . . . . D .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 0120..013F: D . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 0140..015F: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 0160..017F: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 0180..019F: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 01A0..01BF: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 01C0..01DF: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 01E0..01FF: . . . . . . . .  . . . . . . . .  . . . . . . . .  . . . . . . . .
+ 
+ 0200..03FF: Same as 0000h..01FFh, but with D0 inverted
+             (ie. "A A F B B B A A  8 8 8 8 8 8 8 8" etc.)
+             (that is, SYNC is inverted during HSYNC period)
+
+* Note: The "." entries contain a value of 9. (The "." is just used instead of "9" to make the other entries more visible)
+
+----
+
+Upper Data bits in VDKEY (the Keyboard related part):
+
+ 0000..001F: E D D F F F F 6  C C D E E D E 5  E 9 E 9 D C D 2  C F B A 8 E F 5
+ 0020..003F: F F B B A A C 4  8 8 A B E 9 A 4  9 9 B C A A B 5  8 9 9 B C A A 4
+ 0040..0057: 9 9 8 B 9 B C 6  A A A A A A B 5  8 8 8 8 8 F E 7
+ 
+ 0058..01FF: Filled with "F"
+ 
+ 0200..021F: 7 6 7 0 3 2 1 1  9 2 0 0 3 2 2 1  4 9 6 A 3 0 9 1  3 8 A 6 2 8 7 8
+ 0220..023F: 9 A 8 6 9 5 5 A  A 9 4 3 9 2 7 6  8 7 7 7 8 2 9 A  6 5 6 4 4 A 3 8
+ 0240..0257: 3 4 1 2 1 5 1 A  0 0 0 0 0 0 1 5  3 4 5 7 8 5 5 6
+ 
+ 0258..03FF: Filled with "F"
+
+----
+
+Upper and Lower Data Bits in Unused Part of VDKEY:
+
+ 0400..07FF: Not used (A10 is wired to GND) (FFh-filled in ROM-image)
+
+== Aleste AF prom (Floppy) ==
+
+This 32x8bit PROM assists the floppy disk controller. It's related to low-level signals recorded on the floppy (nothing to care about when accessing the floppy I/O ports).
+
+ 0000: 11 11 02 03 03 04 05 06  0B 0D 0C 0E 0F 0F 00 01
+ 0010: 11 12 03 04 05 06 07 08  09 0A 0B 0C 0D 0E 0F 00
+
+In Amstrad's DDI-1 disk interface, the uPD765 floppy controller is assisted by a FDC9229BT chip. The Aleste has a russian equivalent to the uPF765, but none to the FDC9229BT - instead, that portion is handled by the PROM and separate logic chips.
+
+== Aleste COLDAT eprom (full original uncommented dump) ==
+
+ 0000: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0010: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0020: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0030: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0040: 40 41 42 43 44 45 46 47  48 49 4A 4B 4C 4D 4E 4F
+ 0050: 50 51 52 53 54 55 56 57  58 59 5A 5B 5C 5D 5E 5F
+ 0060: 60 61 62 63 64 65 66 67  68 69 6A 6B 6C 6D 6E 6F
+ 0070: 70 71 72 73 74 75 76 77  78 79 7A 7B 7C 7D 7E 7F
+ 0080: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0090: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 00A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 00B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 00C0: C0 C1 C2 C3 C4 C5 C6 C7  C8 C9 CA CB CC CD CE CF
+ 00D0: D0 D1 D2 D3 D4 D5 D6 D7  D8 D9 DA DB DC DD DE DF
+ 00E0: E0 E1 E2 E3 E4 E5 E6 E7  E8 E9 EA EB EC ED EE EF
+ 00F0: F0 F1 F2 F3 F4 F5 F6 F7  F8 F9 FA FB FC FD FE FF
+ 0100: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0110: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0120: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0130: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0140: 15 15 1C 1F 10 13 14 17  13 1F 0F 3F 03 33 07 37
+ 0150: 10 1C 0C 3C 00 30 04 34  11 1D 0D 3D 01 31 05 35
+ 0160: 15 15 1C 1F 10 13 14 17  13 1F 0F 3F 03 33 07 37
+ 0170: 10 1C 0C 3C 00 30 04 34  11 1D 0D 3D 01 31 05 35
+ 0180: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0190: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 01A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 01B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 01C0: 80 81 82 83 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 01D0: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 01E0: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 01F0: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0200: 01 01 01 03 01 01 01 02  01 01 01 01 01 01 01 01
+ 0210: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0220: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0230: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0240: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0250: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0260: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0270: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0280: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0290: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02A0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02B0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02C0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02D0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02E0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 02F0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0300: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0310: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0320: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0330: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0340: 40 41 42 43 44 45 46 47  48 49 4A 4B 4C 4D 4E 4F
+ 0350: 50 51 52 53 54 55 56 57  58 59 5A 5B 5C 5D 5E 5F
+ 0360: 60 61 62 63 64 65 66 67  68 69 6A 6B 6C 6D 6E 6F
+ 0370: 70 71 72 73 74 75 76 77  78 79 7A 7B 7C 7D 7E 7F
+ 0380: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0390: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 03A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 03B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 03C0: C0 C1 C2 C3 C4 C5 C6 C7  C8 C9 CA CB CC CD CE CF
+ 03D0: D0 D1 D2 D3 D4 D5 D6 D7  D8 D9 DA DB DC DD DE DF
+ 03E0: E0 E1 E2 E3 E4 E5 E6 E7  E8 E9 EA EB EC ED EE EF
+ 03F0: F0 F1 F2 F3 F4 F5 F6 F7  F8 F9 FA FB FC FD FE FF
+ 0400: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0410: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0420: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0430: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0440: 40 41 42 43 44 45 46 47  48 49 4A 4B 4C 4D 4E 4F
+ 0450: 50 51 52 53 54 55 56 57  58 59 5A 5B 5C 5D 5E 5F
+ 0460: 60 61 62 63 64 65 66 67  68 69 6A 6B 6C 6D 6E 6F
+ 0470: 70 71 72 73 74 75 76 77  78 79 7A 7B 7C 7D 7E 7F
+ 0480: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0490: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 04A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 04B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 04C0: C0 C1 C2 C3 C4 C5 C6 C7  C8 C9 CA CB CC CD CE CF
+ 04D0: D0 D1 D2 D3 D4 D5 D6 D7  D8 D9 DA DB DC DD DE DF
+ 04E0: E0 E1 E2 E3 E4 E5 E6 E7  E8 E9 EA EB EC ED EE EF
+ 04F0: F0 F1 F2 F3 F4 F5 F6 F7  F8 F9 FA FB FC FD FE FF
+ 0500: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0510: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0520: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0530: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0540: 00 10 20 30 04 14 24 34  08 18 28 38 0C 1C 2C 3C
+ 0550: 01 11 21 31 05 15 25 35  09 19 29 39 0D 1D 2D 3D
+ 0560: 02 12 22 32 06 16 26 36  0A 1A 2A 3A 0E 1E 2E 3E
+ 0570: 03 13 23 33 07 17 27 37  0B 1B 2B 3B 0F 1F 2F 3F
+ 0580: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0590: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 05A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 05B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 05C0: 80 81 82 83 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 05D0: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 05E0: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 05F0: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0600: 01 01 01 03 01 01 01 02  01 01 01 01 01 01 01 01
+ 0610: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0620: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0630: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0640: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0650: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0660: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0670: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0680: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0690: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06A0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06B0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06C0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06D0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06E0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 06F0: 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
+ 0700: 00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+ 0710: 10 11 12 13 14 15 16 17  18 19 1A 1B 1C 1D 1E 1F
+ 0720: 20 21 22 23 24 25 26 27  28 29 2A 2B 2C 2D 2E 2F
+ 0730: 30 31 32 33 34 35 36 37  38 39 3A 3B 3C 3D 3E 3F
+ 0740: 40 41 42 43 44 45 46 47  48 49 4A 4B 4C 4D 4E 4F
+ 0750: 50 51 52 53 54 55 56 57  58 59 5A 5B 5C 5D 5E 5F
+ 0760: 60 61 62 63 64 65 66 67  68 69 6A 6B 6C 6D 6E 6F
+ 0770: 70 71 72 73 74 75 76 77  78 79 7A 7B 7C 7D 7E 7F
+ 0780: 80 81 82 83 84 85 86 87  88 89 8A 8B 8C 8D 8E 8F
+ 0790: 90 91 92 93 94 95 96 97  98 99 9A 9B 9C 9D 9E 9F
+ 07A0: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 AA AB AC AD AE AF
+ 07B0: B0 B1 B2 B3 B4 B5 B6 B7  B8 B9 BA BB BC BD BE BF
+ 07C0: C0 C1 C2 C3 C4 C5 C6 C7  C8 C9 CA CB CC CD CE CF
+ 07D0: D0 D1 D2 D3 D4 D5 D6 D7  D8 D9 DA DB DC DD DE DF
+ 07E0: E0 E1 E2 E3 E4 E5 E6 E7  E8 E9 EA EB EC ED EE EF
+ 07F0: F0 F1 F2 F3 F4 F5 F6 F7  F8 F9 FA FB FC FD FE FF
+
+
+
+== Aleste VDKEY eprom (full original uncommented dump) ==
+
+ 0000: EB DB DE FA FA FA FB 6B  C9 C9 D9 E9 E9 D9 E9 59
+ 0010: E9 99 E9 99 D9 C9 D9 29  C9 F9 B9 A9 8D E9 F9 59
+ 0020: F9 F9 B9 B9 A9 A9 C9 49  89 89 A9 B9 E9 99 A9 49
+ 0030: 99 99 B9 C9 A9 A9 BD 59  89 99 99 B9 C9 A9 A9 49
+ 0040: 99 99 89 B9 99 B9 C9 69  A9 A9 A9 A9 A9 A9 B9 59
+ 0050: 8D 89 89 89 89 F9 E9 79  F9 F9 F9 F9 F9 F9 F9 F9
+ 0060: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 FD F9 F9 F9 F9 F9
+ 0070: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0080: F9 F9 F9 F9 FD F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0090: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 FD F9
+ 00A0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 00B0: F9 F9 F9 F9 F9 F9 F9 F9  FD F9 F9 F9 F9 F9 F9 F9
+ 00C0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 00D0: F9 F9 FD F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 00E0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 FD F9 F9 F9
+ 00F0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0100: F9 F9 F9 F9 F9 F9 FD F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0110: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0120: FD F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0130: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0140: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0150: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0160: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0170: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0180: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0190: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01A0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01B0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01C0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01D0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01E0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 01F0: F9 F9 F9 F9 F9 F9 F9 F9  F9 F9 F9 F9 F9 F9 F9 F9
+ 0200: 7A 6A 7F 0B 3B 2B 1A 1A  98 28 08 08 38 28 28 18
+ 0210: 48 98 68 A8 38 08 98 18  38 88 A8 68 2C 88 78 88
+ 0220: 98 A8 88 68 98 58 58 A8  A8 98 48 38 98 28 78 68
+ 0230: 88 78 78 78 88 28 9C A8  68 58 68 48 48 A8 38 88
+ 0240: 38 48 18 28 18 58 18 A8  08 08 08 08 08 08 18 58
+ 0250: 3C 48 58 78 88 58 58 68  F8 F8 F8 F8 F8 F8 F8 F8
+ 0260: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 FC F8 F8 F8 F8 F8
+ 0270: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0280: F8 F8 F8 F8 FC F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0290: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 FC F8
+ 02A0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 02B0: F8 F8 F8 F8 F8 F8 F8 F8  FC F8 F8 F8 F8 F8 F8 F8
+ 02C0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 02D0: F8 F8 FC F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 02E0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 FC F8 F8 F8
+ 02F0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0300: F8 F8 F8 F8 F8 F8 FC F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0310: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0320: FC F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0330: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0340: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0350: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0360: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0370: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0380: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0390: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03A0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03B0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03C0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03D0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03E0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 03F0: F8 F8 F8 F8 F8 F8 F8 F8  F8 F8 F8 F8 F8 F8 F8 F8
+ 0400: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0410: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0420: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0430: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0440: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0450: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0460: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0470: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0480: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0490: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04A0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04B0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04C0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04D0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04E0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 04F0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0500: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0510: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0520: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0530: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0540: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0550: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0560: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0570: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0580: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0590: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05A0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05B0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05C0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05D0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05E0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 05F0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0600: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0610: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0620: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0630: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0640: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0650: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0660: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0670: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0680: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0690: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06A0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06B0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06C0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06D0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06E0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 06F0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0700: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0710: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0720: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0730: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0740: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0750: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0760: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0770: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0780: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 0790: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07A0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07B0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07C0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07D0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07E0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+ 07F0: FF FF FF FF FF FF FF FF  FF FF FF FF FF FF FF FF
+
+[[Category:Non CPC Computers]][[Category:Clones]]

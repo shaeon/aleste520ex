@@ -1,0 +1,54 @@
+Hardware Expansions for [[Aleste 520EX]]
+
+== External Connectors ==
+
+=== Edge Connectors ===
+
+These are (almost) same as in CPC:
+
+* [[Connector:2nd disc drive (CPC664, CPC6128, CPC6128+)|Disc drive]] - Drive Select for A: and B: (unlike CPC's 2nd drive, which has B: only)
+* [[Connector:Expansion port|Expansion port]] - Additional DMA pins, no /BUS_RESET pin
+
+=== Female 5pin/7pin DIN Connectors ===
+
+These have similar signals as in CPC, but totally different pin-outs as in CPC:
+
+* [[Connector:Cassette recorder|Cassette recorder]] - Totally different pin-out, without Motor control
+* [[Connector:Digital joystick|Digital joystick]] - Totally different pin-out, no COM2, no FIRE3
+* [[Connector:Monitor|Monitor]] -  Totally different pin-out, plus mono-sound
+* [[Connector:Printer port|Printer port]] - Totally different pin-out, plus one extra pin
+* [[Connector:Stereo sound|Stereo sound]] - Totally different pin-out, mono only (not real stereo)
+* [[Connector:Serial Port|Serial port]] - Aleste specific (none such built-in in CPCs)
+
+== Hardware Expansions ==
+
+Most pins on the expansion port are the same as on CPC, so most CPC expansions should work on the Aleste (with a 62pin to 50pin adaptor).
+
+Additional Aleste specific expansions are:
+
+=== External Disc Drive ===
+
+The Aleste contains a disk controller, so no external disc interface is required. The floppy connector is the same as the "Drive B Connector" on CPC, the only difference is that outputs select signals for two drives (A and B).
+The 'official' Aleste drive is 3.5", 720K, 80 tracks. It does also contain the power supply for the computer (which must be connected via whatever separate cable).
+
+=== Magic Sound Expansion Board ===
+
+MagicSound is a four channel DMA playback device. Supports 8 bit per sample, 6 bits of volume per channel, and 16bit samplerate timer per channel. Computer uses the board for playing STM (Scream Tracker) files. For details, see:
+
+* [[Magic Sound Board]]
+
+=== Foton Expansion Board ===
+
+Another additional board FOTON is a "Light Processor". The board have D54 interface and Aleste with special FX application controls over club's light. (In english: it could be named "Photon Disco Light Controller")
+
+=== 2MB RAM Expansion ===
+
+The Aleste is said to be expandable to 2MB RAM. Whether or not (and how) this is possible is unclear. There seem to be no provisions for that on the mainboard. The register file (chip number D88) could actually store two additional bank bits. But the I/O port (port 7FFFh with Bit6-7=high) has only ONE spare bit (bit5), so, with that I/O port, only 1MB would be possible, not 2MB.
+
+=== Turbo Mode Upgrade ===
+
+Runs the CPU at faster speed. Intended for programs that require a lot of CPU load, like compilers, or ported MSX games (which need to draw the MSX video display processors (VDP) hardware sprites by software).
+* The Turbo Mode schematic is unknown
+* Turbo Mode is said to be incompatible with AMSDOS disk access for timing reasons (ie. works only with MSXDOS or so) (not sure if that's a bios/software related problem - it might also be caused by video resolution (which changes CPU and DOT clocks): working in 256/512 pix modes, but not in amstrad-style 160/320/640 pix modes)
+
+[[Category:Non CPC Computers]][[Category:Clones]]

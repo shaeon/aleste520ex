@@ -1,0 +1,69 @@
+Unsorted Notes for [[Aleste 520EX]]
+
+==Amstrad Mode==
+
+Differences:
+
+- Interrupts can't be manually cleared. This was possible on the CPC by writing to the Gate Array with data bit 7 set 1, bit 6 set to 0 and bit 4 set to 1. In the Aleste this bit is controls an LED.
+
+- Decoding of it's equivalent of the Gate-Array is based on A15 only.
+
+- The Aleste uses a patched CPC6128 Operating System ROM. It is patched to use the Aleste's 8-bit printer port and has a different startup message.
+
+==Special Mode==
+
+At this mode computer have different memory manager. The manager seems same like MSX mapper and could swicth ON any 16KB page of whole memroy at the any of 16KB page of CPU memory.
+
+The mode have different color coding system. It has the color lookup table (CLUT) or another name pallette. That is dual port memory one prot for coversion pixel's color number to RGB levels. But second for CPU acccess. There is 2 bits for each channel at the pallette present, then it lets to have 64 colors.
+
+The mode have two additional modes with 32KB of video memory. Pixel encoding the same as at Amstrad mode but each line has twice more bytes (and pixels). Two 16KB pages transfer to output, one buffer for odd and second even lines of screen.
+
+The computer have also mc146818 compatible RTC and a 8251 compatible serial. A serial mouse can be used.
+
+The 8253 timer is used to generate transmit and receive clock for serial. In addition the CURSOR output of the CRTC is connected as a trigger which is then connected to the colour hardware. So the CRTC cursor can be used to switch colours by the hardware.
+
+Aleste ROM is 64KB:
+* page 0 is modified Amstrad CPC6128 OS ROM
+* page 1 is Amstrad BASIC
+* page 2 is AMSDOS (Amstrad DOS)
+* page 3 is Boot Rom, BIOS Setup, MSXDOS boot loader
+
+The BIOS SETUP lets control over: date and time, boot drive, RAM disk, screen mode and style, printer, serial port, and mouse.
+
+At the boot time computer loads BIOS and MSXBDOS (BIOS for Disc BIOS) from a bood disc. After that COMMAND.COM (MSXDOS). Computer can bott from RAM disc as well. Computer go to AMSTRAD mode when "Shift" is pressed while reset.
+
+== Technical specs ==
+
+* CPU: Z80
+* Clock: 4Mhz (CPC mode derived from a 16Mhz crystal), 3.2Mhz (Aleste mode derived from a 13Mhz crystal) 
+*  Memory manager: Dk'Tronics compatible memory mapper (CPC mode), msx-mapper (Aleste mode)
+* Memory: 512KB (up to 2MB) RAM
+* Audio: AY8910
+* Graphics:
+** 256x212:16 colors
+** 512x212:4 colors
+** 320x200:16 colirs
+** 640x200:4 colors
+** 640x400:4 colors interleaved
+** Palette 64 colors
+** Hardware scroll (standard CRTC hardware scroll)
+* Floppy disk 3.5"
+* Mouse
+* RTC (mc146818 compatible)
+* Expansion slot
+** 19 address lines
+** DMA to whole memory
+** External board MagicSound
+*** 4 channels
+*** 8 bits per channel
+*** Stereo output
+* Touch screen (only prototype)
+* Light-Processor with D54
+
+== More Pictures ==
+
+<gallery>
+Image:Deepfb keyb size aleste.jpg|Dimensions
+</gallery>
+
+[[Category:Non CPC Computers]][[Category:Clones]]

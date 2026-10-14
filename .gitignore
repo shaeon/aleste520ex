@@ -1,0 +1,22 @@
+# Quartus
+db/
+incremental_db/
+output_files/
+simulation/
+greybox_tmp/
+build_id.v
+*.qws
+*.rpt
+*.summary
+*.done
+*.jdi
+*.pin
+*.sof
+*.rbf
+*.smsg
+*.qarlog
+# Verilator y herramientas
+sim/obj*/
+sim/tzx_equiv/obj/
+__pycache__/
+*.pyc

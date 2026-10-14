@@ -1,0 +1,65 @@
+[[Image:Aleste.jpg|thumb|right|Aleste 520EX - a CPC clone housed in a case with MSX keyboard]]
+The '''Aleste 520EX''' is a [[Clones|clone]] of the Amstrad CPC 6128 developed 1993 by [[Patisonic]] in  Omsk (Siberia). The Aleste is rare, according to Patisonic themselves, they ''"produced several dozens of the model, some of them were in 'kit' form"''.
+
+In addition to the standard CPC6128 features, it includes a number of extra features: '''64-color''' palette, '''double color depth''' in slightly '''decreased horizontal resolution''' mode (eg. 16 color at 256x200 resolution), battery-backed '''Real Time Clock''' chip, '''512Kbyte RAM''' (of which 192K can be accessed as on 64K CPC with 128K dk'tronics memory expansion), '''8bit printer''' port, expanded keyboard matrix with '''10 additional keys''', two software controlled '''LEDs''', extended Expansion Port (with additional pins for '''DMA support''').
+
+== Technical ==
+
+* [[Aleste 520EX - I/O Ports]] - I/O Ports, Memory, etc.
+* [[Aleste 520EX - Schematics]] - Schematics, Chipset, etc.
+* [[Aleste 520EX - Expansions]] - Hardware Expansions, External Connectors, etc.
+* [[Aleste 520EX - Software]] - CPC software, CP/M, MSXDOS, and games ported to Aleste
+* [[Aleste 520EX - Misc]] - Unsorted Notes
+
+== Pictures ==
+
+<gallery caption="Aleste 520EX">
+File:ALESTE_520EX_PCB_Top.jpg|PCB Top
+File:ALESTE_520EX_PCB_Bottom.jpg|PCB Bottom
+File:ALESTE_Keyboard.jpg|Keyboard
+</gallery>
+
+<gallery caption="Pictures from http://aleste520.narod.ru">
+File:Aleste Open.jpg|PCB and Keyboard
+File:Aleste PCB Top.jpg|PCB top (component side)
+File:Aleste PCB Bottom.jpg|PCB bottom (solder side)
+File:Aleste PCB Illustrated.gif|PCB illustrated
+</gallery>
+
+The above photos are showing a more or less fully assembled Aleste (the LEDs are missing, and, more important, there is no connection for an internal or external power supply attached to the mainboard - unless the owner used the Expansion Port connector to inject power supply voltages).
+
+----
+
+<gallery caption="Pictures from http://www.zonadepruebas.com">
+File:Deepfb-aleste-with-keyboard.jpg|PCB and Keyboard
+File:Deepfb-aleste-without-keyboard.jpg|PCB only
+File:Deepfb-aleste-rear-connectors.jpg|Rear-connectors
+File:Deepfb-aleste-bottom.jpg|Bottom
+</gallery>
+
+This version has 7pin+7pin sockets for printer (normal would be 5pin+7pin, though the extra pins are most probably left unused).
+
+<gallery caption="Magic Sound board">
+File:ALESTE_MagicSound_PCB_Top.jpg|PCB Top
+File:ALESTE_MagicSound_PCB_Bottom.jpg|PCB Bottom
+</gallery>
+
+A sound card for the Aleste.
+
+== Documents ==
+
+* [[Media:Aleste-Programming-Manual-English.txt]] - original programming manual (english version, ported to ASCII format)
+* [[Media:AlesteStartupManual.txt]] - info on building the computer, fixing bugs on the PCB (translated to english)
+* [[Media:AlesteSchematicDescription.txt]] - description of schematics (translated to english)
+* [[Media:AlesteUserManual.txt]] - includes external pin-out; some of them conflict with schematics (translated to english)
+* [[Media:AlesteBiosDisassembly.txt]] - Disassembly of differences between CPC6128 and Aleste BIOS
+* [[Media:AlesteBootmenuRomBank3.asm]] - Original source code for BOOTMENU (Upper ROM Bank 3)
+* [[Aleste Translation PROMs and EPROMs]] - description of the numbers in the look-up PROMs/EPROMs
+* [[Media:Aleste Interview Deepfb Valeriy.h t m l]] - Interview with one of the Aleste developers (to view the file: repair the extension, and/or insert HTML and /HTML tags - for some reason, cpcwiki doesn't support the html format)
+
+== Weblinks ==
+
+* http://aleste520.narod.ru - site dedicated to aleste (mainly english, plus some russian docs)
+* [https://github.com/LasDesu/Aleste-520EX github.com/LasDesu/Aleste-520EX] - schematics, PCBs, ROMs and docs
+
+[[Category:Hardware]][[Category:Non CPC Computers]][[Category:Clones]]

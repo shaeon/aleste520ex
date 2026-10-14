@@ -1,0 +1,125 @@
+Aleste 520EX BIOS disassembly - March 2010 by nocash
+
+-------------------------------------------------------------------------------
+
+Lower ROM bank - BIOS (150 bytes different)
+ 0000..0688  same as CPC 6128
+ 0689..06A0  replaced "128K Microcomputer  (v3) by "520EX Personal computer "
+ 06A1..0704  same as CPC 6128
+ 0705..0722  replaced "PROGRAM LOAD FAILED" by printer strobe
+ 0723..0774  replaced LK-selectable manufacturer name by fixed name "Aleste"
+ 0775..0844  same as CPC 6128
+ 0845..0857  replaced port EFXXh printer by using PSG register 15
+ 0858..3FFF  same as CPC 6128
+
+Upper ROM Bank 0 - BASIC (0 bytes different)
+ C000..FFFF  same as CPC 6128
+
+Upper ROM Bank 7 - AMSDOS (0 bytes different)
+ C000..FFFF  same as CPC 6128
+
+Upper ROM Bank 3 - BOOT MENU (16K Aleste specific)
+ The original source code for this portion is released in the internet,
+ see file AlesteBootmenuRomBank3.asm for details.
+
+Note that AMSDOS doesn't include any patches for supporting the double-sided
+80-track drive. So the full 720K can be used only under MSXDOS, whilst AMSDOS
+can access only 180K.
+The russian "Startup Manual" document recommends to install an external
+side-select switch (this would be an optional mod, not a "built-in" standard
+feature), allowing to access 320K per disk, but still leaving the upper 40
+tracks unused.
+A better solution would be to replace AMSDOS by an 80-track AMSDOS clone, such
+such like VDOS, X-DDOS, ParaDOS, etc. Apparently these clones were unknown
+in Osmk at time of making the Aleste.
+
+-------------------------------------------------------------------------------
+
+CPC6128:0688 20 31 32 38+ db   ' 128K Microcomputer  (v3)'
+
+ALESTE: 0688 20 35 32 30+ db   ' 520EX Personal computer '
+
+-------------------------------------------------------------------------------
+
+CPC6128:0705 2A 2A 2A 20+ db   '*** PROGRAM LOAD FAILED ***',0D,0A,00
+
+ALESTE: 0705 00           db   0  ;empty string (instead of PROGRAM LOAD FAILED)
+ALESTE: 0706 06 F6        ld   b,F6      ;\
+ALESTE: 0708 ED 78        in   a,[bc]    ; printer strobe on
+ALESTE: 070A F6 10        or   a,10      ; (continued from 0855h)
+ALESTE: 070C ED 79        out  [bc],a    ;/
+ALESTE: 070E E6 EF        and  a,EF      ;\printer strobe off
+ALESTE: 0710 ED 79        out  [bc],a    ;/
+ALESTE: 0712 FB           ei
+ALESTE: 0713 D1           pop  de
+ALESTE: 0714 C1           pop  bc
+ALESTE: 0715 37           scf
+ALESTE: 0716 C9           ret
+ALESTE: 0717 FF ..        db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+
+-------------------------------------------------------------------------------
+
+CPC6128:0723 06 F5        ld   b,F5     ;\
+CPC6128:0725 ED 78        in   a,[bc]   ;
+CPC6128:0727 2F           cpl           ; read manufacturer name LKs
+CPC6128:0728 E6 0E        and  a,0E     ;
+CPC6128:072A 0F           rora          ;/
+CPC6128:072B 21 38 07     ld   hl,0738  ;\
+CPC6128:072E 3C           inc  a        ;
+CPC6128:072F 47           ld   b,a      ;
+CPC6128:0730 7E           ld   a,[hl]   ; search corresponding string
+CPC6128:0731 23           inc  hl       ;
+CPC6128:0732 B7           or   a,a      ;
+CPC6128:0733 20 FB        jr   nz,0730  ;
+CPC6128:0735 10 F9        djnz 0730     ;/
+CPC6128:0737 C9           ret
+CPC6128:0738 41 72 6E 6F+ db   'Arnold',00
+CPC6128:073F 41 6D 73 74+ db   'Amstrad',00
+CPC6128:0747 4F 72 69 6F+ db   'Orion',00
+CPC6128:074D 53 63 68 6E+ db   'Schneider',00
+CPC6128:0757 41 77 61 00  db   'Awa',00
+CPC6128:075B 53 6F 6C 61+ db   'Solavox',00
+CPC6128:0763 53 61 69 73+ db   'Saisho',00
+CPC6128:076A 54 72 69 75+ db   'Triumph',00
+CPC6128:0772 49 73 70 00  db   'Isp',00
+
+ALESTE: 0723 21 38 07     ld   hl,0738  ;\pointer to fixed name "Aleste"
+ALESTE: 0726 C9           ret           ;/
+ALESTE: 0727 FF ..        db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 0737 C9           ret
+ALESTE: 0738 41 6C 65 73+ db   'Aleste',00,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 0746 FF FF FF FF+ db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 0751 FF FF FF FF+ db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 075C FF FF FF FF+ db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 0767 FF FF FF FF+ db   FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF
+ALESTE: 0772 FF FF FF 00  db   FF,FF,FF,00
+
+-------------------------------------------------------------------------------
+
+CPC6128:0844 C5           push bc
+CPC6128:0845 06 EF        ld   b,EF     ;\
+CPC6128:0847 E6 7F        and  a,7F     ; output 7bit data with strobe off
+CPC6128:0849 ED 79        out  [bc],a   ;/
+CPC6128:084B F6 80        or   a,80     ;\
+CPC6128:084D F3           di            ; output 7bit data with strobe on
+CPC6128:084E ED 79        out  [bc],a   ;/
+CPC6128:0850 E6 7F        and  a,7F     ;\
+CPC6128:0852 FB           ei            ; output 7bit data with strobe off
+CPC6128:0853 ED 79        out  [bc],a   ;/
+CPC6128:0855 C1           pop  bc
+CPC6128:0856 37           scf
+CPC6128:0857 C9           ret
+
+ALESTE: 0844 C5           push bc
+ALESTE: 0845 D5           push de
+ALESTE: 0846 5F           ld   e,a      ;-memorize 8bit data
+ALESTE: 0847 3E 07        ld   a,07     ;\
+ALESTE: 0849 0E BF        ld   c,BF     ; PSG Control: set data direction output
+ALESTE: 084B CD 63 08     call 0863     ;/
+ALESTE: 084E 4B           ld   c,e      ;\
+ALESTE: 084F 3E 0F        ld   a,0F     ; PSG ExtPortA: output 8bit data
+ALESTE: 0851 CD 63 08     call 0863     ;/
+ALESTE: 0854 F3           di            ;\continue with strobe handling
+ALESTE: 0855 C3 06 07     jp   0706     ;/
+
+-------------------------------------------------------------------------------

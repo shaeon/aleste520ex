@@ -1,0 +1,434 @@
+       Translation of russian "Schematic description" for Aleste 520EX
+
+              (the translated text doesn't make too much sense)
+              (but may be helpful to get an idea what is in it)
+
+            Scheme PCs ALESTE 520EX includes the following sites:
+
+D1-D8            - RAM (even bytes).
+D9-D16           - RAM (odd bytes).
+D17              - Programmable parallel interface.
+D18              - Music processor.
+D19              - Nonvolatile memory SETUPa and watch real time.
+D20-D24          - Address multiplexers.
+D25              - Video Display.
+D26, D28, D85.3,
+D87-D89          - Mapper (switchboard pages of RAM).
+D29.1, D29.2     - Signal-IORD,-IOWR.
+D30              - Central processor.
+D31              - ROM 64K (BASIC, AMSTRAD BIOS, AMSTRAD DISC
+                   BIOS, ALESTE SETUP, boot MSX DOS).
+D32              - Register regimes graphics mode mapper,
+                   management quenching images, sampling clock and timer.
+D33              - Programmable timer.
+D34              - Programmable serial interface.
+D35.1, D35.2,
+D44.3, D44.4     - Options are the formation of signals 8ST, 4ST, MVI.
+D35.3, D35.4     - Formation of a page number and ROM.
+D36.1, D36.2     - Clock Generator for the regime AMSTRAD and schemes
+                   drive controller.
+D36.4, D36.5     - Clock Generator for regime ALESTE.
+D37              - Frequency divider.
+D38              - Mode switch graphics high / low permission.
+D39              - Signal RAS, CAS, CLK.
+D40, D75.1,
+D41.1, D41.2,
+D42.4, D44.1     - Signal WE0, WE1, DIS,-DIS.
+D41.3            - Inverter signal FUTURE.
+D41.4            - Shaper sample video controller.
+D42.1, D42.2     - Signal RESET,-RESET.
+D42.3            - Shaper sampling programmable timer.
+D42.5, D85.2,
+D36.3, D36.6,
+D43.1, D43, 2    - Scheme of formation of signals S0,-WAIT,VBUF,CBUF,-VCLK,VCLK.
+D42.6            - Shaper signal -STROBE on printer.
+D43.4            - Shaper blanking signal BLANK.
+D44.2            - Shaper entries in the register mode ALESTE.
+D45, D46         - Buffer registers even and odd bytes video, respectively.
+D47, D48         - Buffer registers even and odd bytes
+                   data for the CPU, respectively.
+D49, D77.2       - Scheme of formation of signals PAGE,-PAGE, HIGHT, SYNC.
+D50, D51         - Shift Registers video.
+D52, D53         - Kommmutatory video modes.
+D54              - Shaper entries in the video modes
+                   color curb, mapper, the numbers of colors, RAM
+                   pereprogromirovaniya colors.
+D55              - Register of video modes, addresses the connection
+                   Pages ROM status LEDs RUS / LAT, CAPS.
+D56              - Register numbers color management record in
+                   Border color register / RAM pereprogromirovaniya colors.
+D57, D29.4       - Register configuration pages ROMs.
+D58              - Register colored curb.
+D59              - Output register colors.
+D60, D61         - RAM pereprogromirovanie colors.
+D62              - Amplifier   Tires   Data   the output of the encoder
+                   color mode AMSTRAD, switch pages Rom.
+D63, D64, D77.1  - Scheme of formation of signals 1-3CY, MK0-3 for
+                   transcoder keyboard, addresses on the ROM D65.
+D65              - Tables for the formation of signals SYNC *, HY *,
+                   SINT *, data about matrix Keyboard for transcoder.
+D66, D29.3,
+D43.3, D85.4     - Scheme of signal-INT.
+D67              - Signal BUFER0, BUFER1,-ROMEN, -RAMEN.
+D68, D69,
+D71.1, D73.1     - Digital PLL, Shaper signals WRC, RDD, the initial signal DW.
+D70              - Controller drive.
+D71.2            - Trigger signal MOTOR-DSKRDY.
+D72              - Divider frequency for digital PLL, drive controller,
+                   a programmable timer, serial interface, final formation
+                   signal DW (Frequency to voltage converter).
+D73.4 - D73.6    - Inverters output signals with drive.
+D74              - Address decoder, Shaper sample drive controller, the
+                   entries in the register Enhanced mode, entries in the
+                   trigger signal MOTOR-DSKRDY.
+D75.3, D76.3,
+D73.2, D73.3     - Scheme of formation of signal-DRIVE0,-DRIVE1.
+D75.2            - Shaper signal-STEP.
+D76.1, D76.2,
+D76.4 - D76.6    - Inverting Amplifiers    signals    on   drive.
+D78.3            - Shaper signal sampling joystick COMMON.
+D78.4            - Shaper signal recording in the RAM matrix Keyboard-3CY.
+D79              - The Register, eliminates "needles" from the output of ROM
+                   and Storage Rooms retrieved column of keyboard.
+D80, D75.4       - The decoder rows of the keyboard.
+D81              - Multiplexer retrieved column of keyboard.
+D82, D83         - RAM keystroke decoder to store
+                   Information about state matrix keyboard.
+D84,
+D78.1, D78.2     - Shift register-to-drive data from the matrix
+                   keyboard and shaper records in it.
+D85.1            - Shaper signal TRK0.
+D86              - Signal DTR *, TXD *.
+VT1              - Shaper sample D19.
+VT2              - Shaper signal B / W monitor.
+VT3              - Inverter-limiter data signal from input
+                   serial Interface (With the release of "mouse", etc.).
+VT4              - Voltage +12 V,-12V.
+VT5              - Inverter limiter signal DSR *.
+
+CAUTION   In this description of the symbol "-" before the name of the signal
+          means that the signal is inverted.
+
+                   Description of individual nodes scheme.
+
+  On elements D36.1 and D36.2 assembled clock generator on frequency 16 MHz
+used in mode AMSTRAD and for Clocking scheme drive controller. The components
+of D36.4 and D36.5 collected generator to the frequency 13.333 MHz, used in
+Advanced mode ALESTE. circuit D37 - this is the usual divisor frequency.
+
+Circuit D38 switches on a signal HIGHT modes: 0 - AMSTRAD / 1 - ALESTE.
+This change of frequency, reaching to Shaper signals CLK, RAS, CAS - D39;
+subgroup - D37; scheme formation signals VBUF - record video data from RAM to
+buffer registers D45, D46; CBUF - write data to the CPU from RAM in buffer
+Registers D47, D48; alarm-WAIT; changing the frequency signal VCLK -- issuance
+for shift registers D50, D51 even bytes and video-VCLK - odd bytes of video
+data, the signal V1113, going on address multiplexer D24.
+
+Signal CBUF simultaneously is the clock frequency for the video controller.
+In chain-WAIT signal is a resistor to an external board, connected to system
+connector could unhindered lock his on GND. Alerts -WAIT and CBUF identical
+but closure signal -WAIT GND to alter the signal CBUF, if take signal -WAIT
+with Togo same output. Node on the elements of D40, D75.1, D41.1, D41.2,
+D42.4, D44.1 forms signals recording RAM: If A0 = 0 - WE0 (even bytes),
+A0 = 1 - WE1 (odd bytes), and also signals And DIS-DIS.
+
+When DIS = 0 to the address inputs of RAM connected address from CPU and
+mapper, and when DIS = 1 from video controller. Moreover, if the processor
+does not access the RAM, then signal DIS will never be equal to 0. This
+allows you to connect to sistemnomy connector controller direct memory
+access (PDP).
+
+In Otherwise case from the moment of transition the processor into a state
+"Capture" to issue addresses the DMA controller on the address bus, on inputs
+Address multiplexers (all still connected to the bus address CPU) would be
+uncertain levels, causing would failures Information in RAM. In this scheme
+it is not.
+
+All signals except data served to RAM through the resistors, that with a
+capacity of inputs form a filter that increases noise immunity RAM.
+
+D77.2 and D49 form signals PAGE, -PAGE, HIGHT, SYNC. When PAGE = 0 to output
+register connected Border color register, and when PAGE = 1 - output RAM
+reprogramming colors.
+
+Synchronization signal SYNC supplied the monitor through the buffer
+register D49.
+
+  Keyboard decoder works as follows:
+
+in time String extinguishing pulse output register D79 there is room available
+interviewee column matrix, and KW3 = 1; then the output ROM D65 appears the
+line number and output decoder D80, D75.4 0 appears in the corresponding
+discharge; Information Reports respondent button written in register D84.
+
+  After poll second button Information about first shifted, and in its place
+gets information about the second. Upon poll eighth Buttons KW3 becomes equal
+to 0, the addresses of RAM matrix Keyboard D82, D83 exposed Number column
+keyboard required standard program AMSTRADa and after record her state in the
+register D84, formed information eight Buttons signal -3CY written in RAM
+matrix keyboard.
+
+  For 128 lines filled all the cells of RAM, and if now some kind program
+will expose to the second address includes a number column Standard matrix
+AMSTRADa, to the second data will Information as if from the standard lines
+of the matrix. For one frame Keyboard questioned one times. Thus was possible
+connect any matrix keyboard size no more than 8 x 11 keys without changing
+the scheme, and changing the whole some tens of bytes in the ROM D65.
+
+6 second output memory matrix Keyboard D82, D83 are connected via resistors,
+in order to at pressed simultaneously even 4 buttons on the controller (for
+example: up, right FIRE1, FIRE2) output element D78.3 COMMON (Sample joystick)
+was able to form a logical zero.
+
+  Node on elements D66, D29.3, D43.3, D85.4 forms interruption -INT.
+Interruption is formed through a 52-line screen starting 18 strings. So way
+for frame formed 6 interrupts. But this is true in the case, if confirmation
+interrupt arrives not later than 26 lines after-INT. If same confirmation
+comes later, then all of the following shift to 26 lines. On diagram shows:
+2 and 3-INT generated after 52 line after the previous one, and 4-INT delayed
+by 26 rows. That eat scheme follows that between the end of the signal-INT
+and the beginning next was no less than 26 lines. Elements D85.4 and D43.3 are
+for prisinhronizatsii first interruption to top frame and delay formation
+next signal-INT if the parish confirmation interruption later than 26 lines
+after the current signal -INT.
+
+We do not know why this was done in firm computer but so far we have not
+done the system CP/M normally not work. For some reason, it is not working
+CP/M we have not been reviewed.
+
+  On registers D32, D55, D56 gave a signal-RESET in order to the time after
+discharge included the standard configuration AMSTRAD.
+
+  ROM D65 forms also signal HY *. This was because what Products video
+controller D25 -- M6845 different manufacturers, available y us, formed
+signal HY varying duration - some have it coincided with the duration of
+HY in computer firm AMSTRAD CPC 6128, while in others it was different.
+
+Therefore if some program prisinhronizirovalas to end pulse HY, interviewing
+discharge PB0 concurrent Interface D17, then her work would have been
+failures. "Needles" to signal HY * removed capacitor.
+
+  ROM D67 forms signals reading Data for the CPU from Buffer Registers
+RAM D47, D48 - BUFER0 (even bytes), BUFER1 (odd); -ROMEN -- showing what now
+to the data bus connected ROM D31; -RAMEN - Showing that now the bus data
+can be connected in one of the buffer registers D47, D48.
+
+When filing on login RAMDIS logical unit signals BUFER0, BUFER1 cease to be
+formed, but the signal-RAMEN continues. It allows connect to sistemnomy
+connector on the external RAM. Signal ROMDIS = 1 off internal Rom. Alerts
+PROM0, PROM1 connect the logical page zero ROM from addresses 0000H and C000H
+respectively. Elements D35.3, D35.4 prohibit connection with address 0000H
+nonzero pages ROMs.
+
+  ROM D62 performs several functions: buferiruet bus Data on output; encodes
+color mode AMSTRAD; recode Rooms pages Rom. In computer firm AMSTRAD capacity
+ROM was 48K, (32 +16) with their Rooms were not running. Our computer set
+one ROM capacity 64K. Thus arose need change scheme select pages ROMs.
+
+To this end Inputs Data register D57 is not directly connected to the bus
+data and to conclusions ROM D62, which recode Rooms standard pages ROM computer
+AMSTRAD in page numbers our Rom. When writing the page number 3 - connect page
+3 our ROM Rooms 7 - Page 2 of our ROM, the rest cases will be connected page 1
+of our ROM. Thus with address 0000H can be connected only page 0 of our ROM
+(in It is AMSTRAD BIOS), and with addresses C000H - only Pages 1,2,3.
+
+When startup computer after discharge from the address 0000H connected AMSTRAD
+BIOS, which begins consistently connected with the address C000H pages numbered
+0 to 15. When record numbers 0 connects page 1 (it is BASIC) and management
+transferred there. After Initialization BASICa going back to the AMSTRAD BIOS,
+which connects Page 1. BASIC again receives management, discovers that has
+already been initialized and returns control AMSTRAD BIOS. That connects page
+2 and the process repeats. In computer firm AMSTRAD CPC 6128 is repeated with
+all pages except 7 - be there AMSTRAD DISK BIOS, in our page 3 be loader
+MSX DOS and program ALESTE SETUP. As only Home 3 gets control, there analysis
+held buttons and the appropriate action.
+
+  Built Larry BASIC processes Rooms natural colors from 0 to 26. Indeed,
+3-level voltage on each beam (this was in a branded computer AMSTRAD) give
+27 colors, but for encoding numbers from 0 to 26 to 5 bits, and 5 bit give 32
+combinations therefore some combination duplicated. A 3-level voltage on each
+beam requires 2 bits - Only 6-bit 3-ray. ROM D62 and encodes a 5-bit number
+physical color in the 6-bit code for the resistor DAC output register D59.
+Since the resistors for every two outputs individual rays different (in the
+computer AMSTRAD they are the same) then eat 4 level dressed on each beam what
+allowed enlarge total number of physical color mode ALESTE to 64.
+
+In This mode signal MAPMOD = 1 and the ROM D62 simply skips junior 6 bit Tires
+Data to simplify the work with 64 colors (although It should be noted that in
+fact it is not so - and if and in other modes at work with flowers ROM D62
+swaps bits 5.4 to 1.0 bits, respectively, but if you use description ports
+and want to set the mode ALESTE some brightness beam B -- bits 1 and 0 then
+this is what happens despite on then what in output Register for D59 color
+beam B responsible bits 5 and 4. Ie can say that for programs consider what
+bits R, G, B are is written in description ports ROM D62 is really in the
+mode ALESTE simply misses 6-bit data bus, and exposes the color mode AMSTRAD
+required standard programs.
+
+This was done after as found that the standard program is required to bits
+R, G, B were located in a byte from the older to the younger, and we have to
+scheme was done contrary -- R and B were reversed. Turned easier Change
+firmware ROM than change Pinout connector, which coincided sostandartnoy
+pinout of the monitor. ).
+
+General in computer AMSTRAD CPC very complex transformation 5-bit Rooms color
+in 6-bit code for the DAC happened within custom BIS and collect similar
+scheme to separate chips it was not good, so we decided to use ROM -- is such
+the main purpose of ROM D62, which had also performs other functions.
+
+  In cell D87 - D89, D26, D85.3, D28 assembled mapper -- control device
+configuration pages of RAM. Signal MAPMOD, coming on chip D26, serves to lock
+in mapper mode AMSTRAD. In This mode there standard distribution memory that
+not change. ROM D28 and provides these distribution. While ALESTE distribution
+Memory programmable ie all address space CPU 64K divided on 4 Pages and in
+each these logical pages, you can connect any of 32 physical.
+
+For this signal MAPMOD = 1 comes ROM at D28 and D26. When recording physical
+Rooms Pages signal -IORQ = 0 and then in what logical options it will be
+connected depends on the addresses A8 A9. When Treatment memory signal-IORQ = 1
+and the address inputs RAM D87, D88 pass address A14, A15. In Depending from
+of A14, A15 is selected address memory cells D87, D88 in which recorded Number
+of physical memory pages. Physical pages numbers 0 - 3 are pages of memory and
+a connecting any of these pages in address ROM space D62 sets signal VRAMACC
+in 1.
+
+If at This signal HIGHTY = 1, then at Treatment CPU to VRAM will occur
+transcoding addresses. Availability two signals HIGHTX and HIGHTY allows
+low-resolution mode (HIGHTX = 0) add in VRAM picture for High regime
+permission (with This HIGHTY must be = 1) and then include mode High
+permission (HIGHTX = 1). That is the signal HIGHTY = 1 means what address in
+VRAM for CPU will recoded. When recoding for the CPU addresses A11 and A14
+in the video memory are interchanged. Distribution of video memory in
+different modes described in another section of the documentation.
+
+D89 is for reading state mapper, at This A8 A9 determine state a of logical
+pages will be read. So way you can always find out what physical page is
+connected in each of four logical.
+
+Mapper operates within 512K. Signal MAPBLK = 1 blocks mapper, which allows
+external cards dostupatsya to the entire memory.
+
+  Tires Data D18, D19, D33 connected to channel A concurrent interface. It
+unloads the data bus and saves address in address space although work with D19
+and D33 some complicated. Signal CSCT = 1 selects the clock, and CS53 = 1
+chooses timer. Input frequency Timer and clock frequency serial Interface 4MHz.
+
+Chat 0 timer - sets speed Reception data channel 1 timer - speed data. Chat 2
+performs a very specific function. Its counting input is a signal HX, and the
+input of the authorization bill signals CURSOR. Signal with output channel 2
+passes through an inverter D41.3 falls on Inputs D52. It allows in monochrome
+and four-color modes to increase the number of colors on the screen in 2 times.
+
+In 16-color modes channel 2 no effect. In monochrome mode except logical
+Flowers 0 and 1 appear logical color 2 and 3; in the four-than 0, 1, 2, 3 --
+appear logical color 4 5, 6, 7. Moreover, the change of colors is starting
+any on-screen line in any continuous number lines. Achieved it following way :
+in videokontollere programmable start and end of the cursor, position cursor -
+that is line which will change colors, the counter channel 2 timer (programmed
+in Mode 1) is written number of lines within which the logical colors 0 and 1
+(0, 1, 2, 3) will be replaced by logical colors 2 and 3 (4, 5, 6, 7).
+
+So as any of the 16 logical colors can be assigned to any of the 64 private
+that, even in monochrome screen can be 4 different colors. Of course, you can
+reprogram the color and interrupts but it would depend on the entire processor,
+and this scheme easily allows get screen required picture is independent from
+processor. To scheme no influence, it is necessary that the signal-FUTURE was
+equal to 0. To do this, program channel 2 in mode 3, but not download his
+counter -- while the output is guaranteed be 1, and at the inputs of the
+multiplexer D52 respectively 0 (the only reason and need an inverter D41.3).
+
+This method of increasing number Flowers applied, in particular, in a text
+editor "POWER WRITER".
+
+  By the serial connector, you can connect IBM "Mouse". Transistor VT4
+assembled voltage converter +-12V. Elements D42.1, D42.2 form signals reset
+for processor Music processor controller drive, serial and concurrent ports
+Registers regimes.
+
+Reset signal for display controller-RESET2 formed separately.
+
+It done for that that while pressing the RESET button is not disappeared
+Regeneration RAM and not perished Information on ramdisk.
+
+  Video information with shear Registers D50, D51 comes on Multiplexers
+graphic regimes D52, D53.
+
+Signals MODE0, MODE1, define the graphics mode. Information logical color
+point PX0, PX1, PX2, PX3 enters the second address inputs of RAM reprogram
+colors D60, D61, which form "programmable palette. To the second data appears
+code physical color C0, C1, C2, C3, C4, C5 adhering to the appropriate logical.
+
+  Signal NCOLOR4, determines which will record - in Register color curb or in
+RAM reprogram colors.
+
+Port In Music D18 processor can operate as the output and the input. This
+allows you to connect to the connector on the printer the most Various device :
+printer cartridge device predekrannogo input, DAC, ADC, programmer, etc.
+
+  Node on the elements of D68, D69, D71.1, D73.1 provides digital PLL when
+reading data from disk and generates a signal WRC, recording to disk. Since
+the findings 33, 37 drive controller D70 can change its function depending
+on the state signal RW / S, the signals from / to them pass through the
+elements and D85.1 D75.2.
+
+The input controller D70 filed RDY signal from the output Triger D71.2, which
+also manages the state of the motor drive. This is done in order to be able
+to programmatically terminate the command controller. Otherwise, when you try 
+write anything on the disk when the disk is not inserted, the program be
+returned through the timeout error, but the controller would remain in the
+same condition and subsequent treatment perceived as data entry.
+
+The fact is that domestic dikovody 5.25 inches the wrong signal to form the
+"Ready" which should not be in the closure drive, and another ways to stop
+the run command but to withdraw willingness to controller is not provided.
+
+Signal from the output INT controller fed to the discharge PB1 concurrent
+interface to simplify Operations head positioning drive. 
+
+  In AMSTRAD computer firm used 40-track sided drive and double-sided discs
+turning upside down diameter of 3.00 (!) inches. The capacity of one side of
+the disc with equal to 180K. For a more complete use applied by us 3.5-inch
+drives that are not overturned and will used in the mode AMSTRAD only a
+quarter, you can do switch sides, it will allow a 2-fold increase capacity 
+disc. How to do this is described in another section of the documentation.
+
+  Output data bus RAM D1 - D16 divided. It allows for one call to read in 2
+bytes. This time read-write cycle, even when you are ALESTE allowed to use 
+memory chips type 565RU7V. When AMSTRAD will work Any chip 565RU7. The fact
+that the RAM operates in normal mode, significantly increased the reliability
+of RAM and a computer in general.
+
+If the output data bus has eight-bit RAM, had would use page mode, which would
+be less reliable using 565RU7 (although in a branded computer, he applied, but
+there are memory chips and proprietary). 
+
+                    Diagram of formation of interrupts. 
+
+    18lin.   26 lines
+   ------:-:---------:
+         : :         :
+         +-------+   :
+         | :     |   :
+HY    ---+ :     +------------------------------------------------------------------------------
+           :         :
+           +-+       +-+       +-+       +-+       +-+       +-+       +-+       +-+       +-+
+           | |       | |       | |       | |       | |       | |       | |       | |       | |
+SINT  -----+ +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ +--
+
+      -----+   +---------------+  +----------------+              +--------------+    +---------
+           |   |               |  |                |              |              |    |
+LOP        +---+               +--+                +--------------+              +----+
+
+           +---------+         +---------+         +-------------------+         +---------+
+           |         |         |         |         |                   |         |         |
+D66/5 -----+         +---------+         +---------+                   +---------+         +----
+
+      -----+ 1+----------------+2+-----------------+      3      +---------------+ 4 +----------
+           |  |                | |                 |             |               |   |
+-INT       +--+                +-+                 +-------------+               +---+
+           :
+      --------++-----------------++------------------------------++------------------++---------
+           :  ||               : ||                :             ||              :   ||
+-INTA      :  ++               : ++                :             ++              :   ++
+           :                   :                   :                             :
+           :     52 lines      :     52 lines      :       52 + 26 lines         :
+           :-------------------:-------------------:-----------------------------:

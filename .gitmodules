@@ -1,0 +1,7 @@
+[submodule "aleste-lx"]
+	path = aleste-lx
+	url = https://github.com/hww/aleste-lx-fpga-sv.git
+	branch = dev
+[submodule "common/mist-modules"]
+	path = common/mist-modules
+	url = https://github.com/teiram/mist-modules.git

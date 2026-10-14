@@ -1,0 +1,634 @@
+            Translation of russian "User Manual" for Aleste 520EX
+
+                                INTRODUCTION
+
+  Congratulations You with buy personal computer "ALESTE 520 EX ". This model
+computer compatible on software ensure and peripheral Hardware with PC
+"AMSTRAD CPC 6128".
+
+  Below are features computer This model.
+     - English / Russian keyboard.
+     - Nonvolatile memory with a clock.
+     - Ability to work in the CP/M or MSX-DOS.
+     - Built-in BASIC.
+     - Computer memory expanded to 512K.
+     - Computer supports 5 graphic regimes screen.
+     - In as Monitor perhaps application domestic TV.
+     - There is an opportunity to connect printer, joystick,
+       any device with RS-232 interface (mouse, etc.).
+
+  This leadership provides the necessary information for correct inclusion
+and operation of the computer. Therefore carefully read this manual before
+commissioning computer and save his in safe place because it is also the
+passport of your computer.
+
+                               SPECIFICATIONS
+
+  Central protsessor____________________________Z80A
+  Clock chastota________________________________4 MHz
+  Memory
+        OZU_____________________________________512 K
+        PZU______________________________________64 K
+  Klaviatura_____________________vstroennaya (78 keys)
+
+                               Graphic modes.
+
+   160x200 16 colors each point from the palette 64 colors
+   20 characters per line, 25 rows
+
+   320x200 4 colors each point from a palette of 64 colors
+   40 characters per line, 25 rows
+
+   640x200 monochrome each point from a palette of 64 colors
+   80 characters per line, 25 rows
+
+   320x200 16 colors each point from the palette 64 colors
+   40 characters per line, 25 rows
+
+   640x200 4 colors each point from a palette of 64 colors
+   80 characters per line, 25 rows
+
+While AMSTRAD number of colors in the palette is reduced to 27.
+The last two modes are available only in MSX-DOS.
+
+  Zvuk____________________________ stereo support
+  Watch kalendarem___________________energonezavisimye
+  External storage ustroystvo______________Diskovod
+  Kollichestvo__________________________do 2 pcs.
+        Capacity
+                MSX-DOS__________________________720K
+                AMSTRAD BASIC____________________180K
+        Tip______________________________5'25 or 3'5
+
+Peripherals
+  - Joystick
+  - Printer (Serial or Parallel)
+  - "Mouse", or any device with RS-232 interface
+  - Power (musical accompaniment)
+  - Dr. device via the system connector (eg
+    fee MAGIG SOUND - music synthesizer)
+
+General data
+      Voltage pitaniya__________________220V 50Hz
+        Dimensions
+        Main blok_______________430h250h50 mm.mm.
+        Block pitaniya________________80h190h120 mm.mm.
+        Bulk
+        Main blok__________________________1, 5 kg
+        Block pitaniya___________________________1, 5 kg
+
+                   COMPLETION
+
+  System blok_________________________________1 pc.
+  Power supply with diskovodom______________________1 pc.
+  Diski__________________________________________5 pc.
+  Pasport________________________________________1 pc.
+  Dzhoystik_______________________________________1 pc.
+  Cable connection monitoru__________________1 pc.
+
+CAUTION A computer can not be installed battery volatile hours.
+
+                          ACTION PREDOSTAROZHNOSTI
+
+  While reporting computer is designed well, it does not be subjected to
+extreme conditions. We recommend You observe following measures precautions
+for that to ensure its longevity.
+     - Avoid falling computer and the attacks on him.
+     - No expose computer Effects direct solar light or other sources heat;
+       not close vents.
+     - Do not spill the liquid if the liquid spilled on the main
+       fee or keyboard then immediately turn off your computer.
+     - Avoid humidity and dust in indoors where computer.
+     - Do not place heavy objects on the keyboard.
+     - Clean the computer with a soft, clean cloth, do not use
+       solvents or cleaners.
+
+                       ENTER YOUR SYSTEM IN OPERATION
+
+     Unpack the components:
+     - Computer
+     - Power supply to drive
+     - The cord to connect the monitor
+     - Diskettes
+
+CAUTION - CONNECTION all connectors is accomplished only in Remove computer.
+
+                        Wiring example
+
+   Monitor     Printer                    Drive with PSU
+     |           |                         |          |
+     | Joystick  |                         |    Mouse |
+     |   |       |       System            |       |  |
+     |   |    ___|      Connector          | Stereo|  |
+     |   |   |   |     ___________        _|_   |  |  |
+     |   |   |   |    |           |      |   |  |  |  |
+  +--1---2---3---4---------5---------------6----7--8--9-+
+  |                                                     |
+  |                                                     |
+  |                    C O M P L E T E R                |
+  |                                                     |
+  |                                                     |
+  +-----------------------------------------------------+
+
+    1   --   connector monitor
+    2   --   connector for joystick
+    3   --   connector 1 for connecting a printer
+    4   --   connector 2 for connecting a printer
+    5   --   system connector
+    6   --   connector drives
+    7   --   connector amplifier (For audio programs)
+    8   --   connector RS-232 interface (connect a mouse or other
+             device with this interface)
+    9   --   cord for power supply
+
+                         Start the computer
+  When you first turn on your computer RECOMMEND YOU MAKE
+
+Next step:
+     - INSTALL CONFIGURATION COMPUTER UNDER SECTION
+       "Computer Configuration".
+     - Load the operating system UNDER SECTION "Run MSX-DOS".
+     - Make copies of system diskette and work in the future With
+       COPIES (see Guide to MSX-DOS).
+
+     1) Make what computer and peripheral device connected to mains.
+     2) include computer system must in next Ordered:
+          Monitor - Peripherals ustoystva - Computer
+          Turn off in reverse order.
+
+  After power on the screen will saver and in bottom of the screen message:
+
+                   BOOT ERROR. PRESS ANY KEY
+
+  Message BOOT ERROR. PRESS ANY KEY (Error loading. Press any key), shows
+you that computer tried load the operating system, but could not find her.
+
+  In reply to this message You can produce following steps:
+     1) Insert in drive CD with operating system and press any key. Then
+        see section WORK IN MSX-DOS.
+     2) Exit to BASIC (see Run BASICa).
+
+       NOTE
+     - If at the time of inclusion in the drive already was Floppy with
+       operating system then system boots automatically.
+
+Message BOOT ERROR. PRESS ANY KEY output.
+
+     - To work with the BASIC You can press key SHIFT and turn on the
+       computer. In this case, the screen saver will not be withdrawn for
+       screen. It appears when you first try to load operating system command
+       "|MSX" or reboot without holding the keys SHIFT.
+
+                       Computer Configuration
+  After switching to non-volatile memory set computer configuration, ie the
+parameters defining as will operate the computer after turning on.
+
+  For view fixed configuration or change must produce reboot computer with
+retention keys TDB ie press key TDB and hold press key RES.
+
+  Then you see the following table.
+
+                      ALESTE 520EX SETUP
+       +------------------------------------------------+
+       | Language                               English |
+       | Current date                        14/10/1993 |
+       | Current time                           0:00:04 |
+       | Boot drive                                  A: |
+       | RAM disk                                   Off |
+       | Display type                             Color |
+       | Screen mode                          640x200x2 |
+       | Screen color     Text             Back         |
+       | Keyboard rate    Delay   08       Repeat    02 |
+       | Keyboard click                              On |
+       | Beep             Tone     0       Volume    08 |
+       | Mouse                                      Off |
+       | Print interface                       Parallel |
+       | Print coding                             KOI-8 |
+       | Serial port    RTS / CTS        Baud rate 1200 |
+       | Bits   8       Parity    Off       Stop bits 1 |
+       +------------------------------------------------+
+       | ESC - Quit                                     |
+       | F1   - Save settings   and quit                |
+       | F5   - Run diagnostics                         |
+       |            - Move cursor                       |
+       | SHIFT +    or SPASE - Charge field             |
+       +------------------------------------------------+
+
+If You want to read the text in the table on Russian - not moving
+cursor, press the space bar.
+
+When first inclusion You must in first turn establish the exact date and time.
+
+                           Warning
+
+     - If inclusion set Date 14/10/1993 in computer without the battery
+       or it is defective.
+     - If in computer not set elements food installed configuration will
+       not be remembered when off computer. Therefore when you switch on
+       your computer will recover the standard configuration, shown in the
+       table.
+     - Function Run diagnostics does not work on all computers.
+
+                   STARTING BASIC-AMSTRAD
+
+To exit the mode BASIC-AMSTRAD must press key SCHIFT and holding it press
+the RESET. By dumping on screen receive the following message.
+
+  +-------------------------------------------+
+  |   Aleste 520EX Personal Computer          |
+  |   @ 1985 Amstrad Consumer Electronics plc |
+  |             and Locomotive Software Ltd.  |
+  |   Basic 1.1                               |
+  |  Ready                                    |
+  |  #                                        |
+  |                                           |
+  +-------------------------------------------+
+
+Message Ready and cursor under These shows You what computer ready for use.
+
+Some teams work with the disk:
+     CAT - catalog use.
+     RUN "program name" - run the program.
+     |CPM - launch programs with protection.
+     For example: RUN "Exolon" <RETURN>.
+The symbol "|" is entered by pressing @ hold down SHIFT.
+
+NOTE: Formats CDs operating system MSX-DOS and BASIC incompatible. This
+oznachaet that it is impossible to work with BASIC disk is formatted in
+MSX-DOS and vice versa. If you want save its program on BASIC on drive
+you will need to format his special program. On disk with systemic programs
+MSX-DOS has such a program (AMC.COM).
+
+                         STARTING MSX-DOS
+
+  Download the operating system can be in several modes D: PC ALESTE 520 EX
+has following Modes work in operating system MSX-DOS, that set at
+initialization.
+
+     - STANDARD MODE -- set on default.
+          Supports work with drives A: and B: (with absence drive B:
+          supported logical Drives on one drive), the configuration
+          of the electronic drive read of hours real-time.
+          When presence on e disk File operating reference system with
+          him made boot in Otherwise case download is with drive,
+          defined in SETUP.
+     - Treatment of one disk drive - is included in the retention of key
+       CTRL after reset. In This mode used only one physical drive A:
+       (regardless of whether the second). This some increases volume memory
+       available program user. Initializing ramdisk and logic downloads
+       OS does not differ from the standard treatment.
+     - To boot from ROM drives - included at retention keys ALT after reset.
+       Mode completely similar standard, except that the loading OS is disk
+       defined in SETUP. Mode useful for Rescue files from the ramdisk if
+       the load with it on any reason is not made.
+     - MODE EMERGENCY LOADING - included at retention ESC key after reset
+       and is used in case failure hours of real time. When This download
+       OS is always with the A: drive and the RAM disk is not initialized.
+       NOTE: Retention keys ESC leads also to activate avarinoy boot in BIOS
+       and ROM loader.
+     - EMERGENCY DOWNLOAD MODE With INITIALIZE ELECTRONIC DRIVE - included at
+       retention combination keys ALT + ESC. It differs from the previous one,
+       which is initialized e Drive up 256K regardless of the settings in SETUP.
+       When need allowed joint inclusion multiple modes.
+
+CAUTION
+If the operating system will not boot, try download it, hold down the ESC.
+
+     To exit the mode MSX-DOS need:
+     - Insert a floppy with the system of MSX-DOS drive
+     - Depending from Chosen You regime work press necessary combination
+       of keys and restart the computer.
+
+   After Downloads system on screen appear following message.
+
+  +-------------------------------------------+
+  |                                           |
+  |    ALESTE 520EX BIOS version 1.01         |
+  |    (c) 1993 PATISONIC                     |
+  |                                           |
+  |    MSX-DOS version 1.04                   |
+  |    Copyright 1984 by Microsoft            |
+  |                                           |
+  |    Command version 2.2A                   |
+  |    (c) 1993 Patisonic                     |
+  |    Date is                                |
+  |                                           |
+  |    a> _                                   |
+  |                                           |
+  +-------------------------------------------+
+
+  The report "a>" indicates the readiness of the system to implement
+Your commands.
+
+  Operating system can be downloaded from AMSTRAD BASIC.
+This after Released in AMSTRAD BASIC must perform command: |MSX <RETURN>.
+
+     Some teams work with the disk:
+     DIR - Directory browsing.
+     "program name" - to download the program.
+     For example: a> PW <RETURN> - starts a text editor.
+
+Description system programs supplied disk, You can acquire the firm PATISONIC.
+
+                      Noncharacter KEYS
+
+                           BASIC
+
+    ESC            Performs the function of interrupting the program.
+    TAB            Move right to the position of fold 8.
+    CTRL           In combined with other keys gives codes control or display
+                   symbols graphics.
+    SHIFT          This key pressed simultaneously with any keys for a capital,
+                   as well as for premescheniya second cursor at editing.
+    F1-F10         Functional keys. It keys programmable functions. They act
+                   so as will be defined by the user.
+    DEL            Key removal. Pressing this key, symbol standing to the
+                   right of the cursor removed and all other characters
+                   This line shift left on one position.
+    BS             After clicking this button deletes 1 symbol left from
+                   cursor cursor and all other string characters are shifted
+                   to the left.
+    COPY           Allows to copying. Borders Copy set with help keys cursor
+                   (see description BASIC).
+                   The cursor moves in the direction specified on  key.
+    RETURN         When you press the cursor keys moves first position next
+                   line and BASIC begins executing the typed command.
+    ENTER          Valid similar RETURN, but can reprogram a function key.
+
+                           MSX - DOS
+
+     ESC           Used in digital applications.
+     TAB           Move right to the position of multiple of 8.
+     CTRL          In combined with other keys gives codes
+                   control or display symbols graphics.
+     SHIFT         This key pressed simultaneously with any
+                   keys to change the case.
+     F1-F10        Used in digital applications.
+     DEL           Key deletes the character.
+     BS            After clicking this button deletes 1 symbol
+                   left from cursor cursor and all other
+                   string characters are shifted to the left.
+     HELP          Used in digital applications.
+     INS           Key insertion.
+     ALT           Used in digital applications.
+                   The cursor moves in the direction ukazannom on the key.
+     RETURN        When you press the cursor keys moves in the first position
+                   following line and system begins executing the typed command.
+     ENTER         Does the same RETURN.
+
+                                SYMBOLIC KEY
+
+                                   BASIC
+
+                                   Normal
++-----------------------------+               +-----------------+ +-----------+
+|     |     |     |     |     |               |     |     | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | ; | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | - |   |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+|  TAB  | j | c | u | k | e | n | g | { | } | z | h | : | / |   | | F7| F8| F9|
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | f | y | w | a | p | r | o | l | d | v | \ | . |RETURN| | F4| F5| F6|
++---------------------------------------------------------------| +---+---+---|
+|CAPS|SPARE| q | | | s | m | i | t | x | b | @ | '  |   |   |   | | F1| F2| F3|
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | COPY|         SPACE              | SHIFT |   |   |   | | F0| . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                               Normal + SHIFT
++-----------------------------+               +-----------------+ +-----------+
+|     |     |     |     |     |               |     |     | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | + | ! | " | # | $ | % | & | ' | ( | ) | _ | = |   |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+| TAB   | J | C | U | K | E | N | G | [ | ] | Z | H | * | ? |   | | F7| F8| F9|
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | F | Y | W | A | P | R | O | L | D | V | \ | > |RETURN| | F4| F5| F6|
++---------------------------------------------------------------| +---+---+---|
+|CAPS|SPARE| Q | | | S | M | I | T | X | B | | | <  |   |   |   | | F1| F2| F3|
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | COPY|         SPACE              | SHIFT |   |   |   | | F0| . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                                MSX-DOS MODE
+
+                                 NORMAL MODE
++-----------------------------+               +-----------------+ +-----------+
+|  F1 |  F2 |  F3 |  F4 |  F5 |               | HELP| INS | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | ; | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | - | _ |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+| TAB   | j | c | u | k | e | n | g | { | } | z | h | : | / |   | | 7 | 8 | 9 |
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | f | y | w | a | p | r | o | l | d | v | \ | . |RETURN| | 4 | 5 | 6 |
++---------------------------------------------------------------| +---+---+---|
+|CAPS| R/L | q | ^ | s | m | i | t | x | b | @ | ,  |   |   |   | | 1 | 2 | 3 |
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | ALT |         SPACE              | SHIFT |   |   |   | | 0 | . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                               Normal + SHIFT
++-----------------------------+               +-----------------+ +-----------+
+|  F6 |  F7 |  F8 |  F9 | F10 |               | HELP| INS | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | + | ! | " | # | $ | % | & | ' | ( | ) |   | = | _ |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+| TAB   | J | C | U | K | E | N | G | [ | ] | Z | H | * | ? |   | | 7 | 8 | 9 |
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | F | Y | W | A | P | R | O | L | D | V | | | > |RETURN| | 4 | 5 | 6 |
++---------------------------------------------------------------| +---+---+---|
+|CAPS| R/L | Q | ~ | S | M | I | T | X | B | ` | <  |   |   |   | | 1 | 2 | 3 |
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | ALT |         SPACE              | SHIFT |   |   |   | | 0 | . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                           MODE RUSSIAN CHARACTER
++-----------------------------+               +-----------------+ +-----------+
+|  F1 |  F2 |  F3 |  F4 |  F5 |               | HELP| INS | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | ; | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | - | ? |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+| TAB   | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | : | / |   | | 7 | 8 | 9 |
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | . |RETURN| | 4 | 5 | 6 |
++---------------------------------------------------------------| +---+---+---|
+|CAPS| R/L | ? | ? | ? | ? | ? | ? | ? | ? | ? | ,  |   |   |   | | 1 | 2 | 3 |
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | ALT |         SPACE              | SHIFT |   |   |   | | 0 | . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                       MODE RUSSIAN CHARACTER + SHIFT
++-----------------------------+               +-----------------+ +-----------+
+|  F6 |  F7 |  F8 |  F9 | F10 |               | HELP| INS | DEL | |     | RES |
++-----------------------------+               +-----------------+ +-----------+
++---------------------------------------------------------------+ +-----------+
+| ESC | + | ! | " | # | $ | % | & | ' | ( | ) |   | = | ? |  BS | |   |   |   |
++---------------------------------------------------------------| +---+---+---|
+| TAB   | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | * | ? |   | | 7 | 8 | 9 |
++-----------------------------------------------------------+   | +---+---+---|
+|  CTRL  | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | > |RETURN| | 4 | 5 | 6 |
++---------------------------------------------------------------| +---+---+---|
+|CAPS| R/L | ? | ? | ? | ? | ? | ? | ? | ? | ? | <  |   |   |   | | 1 | 2 | 3 |
++--------------+------------------------------------|   +---|   | +---+---+---|
+|  SHIFT | ALT |         SPACE              | SHIFT |   |   |   | | 0 | . |ENT|
++---------------------------------------------------------------+ +-----------+
+
+                              Pinout Connectors
+
+
++---------------------------------------------------------------------------+
+| Contact  |    SIGNAL  | SIGNAL         |      V I D E O                   |
++----------+------------+----------------+----------------------------------+
+|    1     |    SYNC    | MODE           |                                  |
+|    2     |    GND     | TOTAL          |             .--_--.              |
+|    3     |    R       | RED COLOR      |            /       \             |
+|    4     |    B       | BLUE COLOR     |           | 7     6 |            |
+|    5     |    G       | GREEN COLOR    |           |3       1|            |
+|    6     |    SOUND   | OUT SOUND      |            \ 5 2 4 /             |
+|    7     |    LUM     | B/W SIGNAL     |             '-----'              |
+|  CORPUS  |    GND     | TOTAL          |                                  |
++---------------------------------------------------------------------------+
+
++---------------------------------------------------------------------------+
+| Contact  |   SIGNAL   |    SIGNAL      |   D F J O S T I K                |
++---------------------------------------------------------------------------+
+|    1     |   COMMON   | TOTAL JOSTICK  |                                  |
+|    2     |   LEFT     | LEFT           |             .--_--.              |
+|    3     |   RIGHT    | RIGHT          |            /       \             |
+|    4     |   FIRE 1   | Button 1       |           | 7     6 |            |
+|    5     |   FIRE 2   | Button 2       |           |3       1|            |
+|    6     |   DOWN     | DOWN           |            \ 5 2 4 /             |
+|    7     |   UP       | UP             |             '-----'              |
+|  CORPUS  |   GND      | TOTAL          |                                  |
++---------------------------------------------------------------------------+
+
++---------------------------------------------------------------------------+
+| Contact  |   SIGNAL   |    SIGNAL      |    U S I L I T E L L     |
++---------------------------------------------------------------------------+
+|    1     |   N/C      |                |             .--_--.              |
+|    2     |   GND      | TOTAL          |            /       \             |
+|    3     |   SOUND    | SOUND          |           |         |            |
+|    4     |   N/C      |                |           |3       1|            |
+|    5     |   SOUND    | SOUND          |            \ 5 2 4 /             |
+|  CORPUS  |   GND      | TOTAL          |             '-----'              |
++---------------------------------------------------------------------------+
+
++---------------------------------------------------------------------------+
+| Contact  |   SIGNAL   |    SIGNAL      |        RS - 2 3 2                |
++---------------------------------------------------------------------------+
+|    1     |   RTS      |                |                                  |
+|    2     |   GND      | TOTAL          |             .--_--.              |
+|    3     |   CTS      |                |            /       \             |
+|    4     |   RXD      | Receiver       |           | 7     6 |            |
+|    5     |   TXD      | TRANSMITTER    |           |3       1|            |
+|    6     |   +12V     | VOLTAGE 12V    |            \ 5 2 4 /             |
+|    7     |   RXD      | Receiver       |             '-----'              |
+|  CORPUS  |   GND      | TOTAL          |                                  |
++---------------------------------------------------------------------------+
+
++---------------------------------------------------------------------------+
+| Contact  |   SIGNAL   |    SIGNAL      |      P R I N T E R 1             |
++---------------------------------------------------------------------------+
+|    1     |   PD0      | DATA BIT 0     |                                  |
+|    2     |   GND      | TOTAL          |             .--_--.              |
+|    3     |   PD3      | DATA BIT 3     |            /       \             |
+|    4     |   PD1      | DATA BIT 1     |           | 7     6 |            |
+|    5     |   PD2      | DATA BIT 2     |           |3       1|            |
+|    6     |   STROBE   | GATE           |            \ 5 2 4 /             |
+|    7     |   BUSY     | PREPAREDNESS   |             '-----'              |
+|  CORPUS  |   GND      | TOTAL          |                                  |
++---------------------------------------------------------------------------+
+
++---------------------------------------------------------------------------+
+| Contact  |   SIGNAL   |    SIGNAL      |      P R I N T E R 2             |
++---------------------------------------------------------------------------+
+|    1     |   PD4      | DATA BIT 4     |                                  |
+|    2     |   COMMON   | TOTAL JOYSTICK |             .--_--.              |
+|    3     |   PD7      | DATA BIT 7     |            /       \             |
+|    4     |   PD5      | DATA BIT 5     |           | 7     6 |            |
+|    5     |   PD6      | DATA BIT 6     |           |3       1|            |
+|    6     |   UCC      | + 5V           |            \ 5 2 4 /             |
+|    7     |   UCC      | + 5V           |             '-----'              |
+|  CORPUS  |   GND      | TOTAL          |                                  |
++---------------------------------------------------------------------------+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+                     C O M P L E T E R (a type of connector)
+
+  +-----------------------+      +-------------------------------------+
+  | 17                1 A |      | 31                              1 A |
+  |   =================   |      |   ===============================   |
+  | 17                2 B |      | 31                              1 B |
+  ----------------------------------------------------------------------
+      Connector for the                     system connector
+            DRIVE
+
+      Connector for the                     system connector
+            DRIVE                  +-----+--------+ +-----+--------+
+  +-----+-----+ +-----+--------+   | A1  | SOUND  | | B1  | GND    |
+  | A1  | GND | | B1  |free    |   | A2  | A15    | | B2  | A14    |
+  | A2  | GND | | B2  |free    |   | A3  | A13    | | B3  | A12    |
+  | A3  | GND | | B3  |free    |   | A4  | A11    | | B4  | A10    |
+  | A4  | GND | | B4  |-INDEX  |   | A5  | A9     | | B5  | A8     |
+  | A5  | GND | | B5  |-DRIVE0 |   | A6  | A7     | | B6  | A6     |
+  | A6  | GND | | B6  |-DRIVE1 |   | A7  | A5     | | B7  | A4     |
+  | A7  | GND | | B7  |free    |   | A8  | A3     | | B8  | A2     |
+  | A8  | GND | | B8  |-MOTOR  |   | A9  | A1     | | B9  | A0     |
+  | A9  | GND | | B9  |-DIR    |   | A10 | D7     | | B10 | D6     |
+  | A10 | GND | | B10 |-STEP   |   | A11 | D5     | | B11 | D4     |
+  | A11 | GND | | B11 |-WRDATA |   | A12 | D3     | | B12 | D2     |
+  | A12 | GND | | B12 |-GATE   |   | A13 | D1     | | B13 | D0     |
+  | A13 | GND | | B13 |-TRAC0  |   | A14 | UCC    | | B14 | -MREQ  |
+  | A14 | GND | | B14 |-WRTPRT |   | A15 | -M1    | | B15 | -RFSH  |
+  | A15 | GND | | B15 |-RDATA  |   | A16 | -IORQ  | | B16 | -RD    |
+  | A16 | GND | | B16 |-SIDE   |   | A17 | -WR    | | B17 | -HALT  |
+  | A17 | GND | | B17 |free    |   | A18 | -INT   | | B18 | -NMI   |
+  +-----+-----+ +-----+--------+   | A19 | -BUSRQ | | B19 | -BUSAK |
+                                   | A20 | -WAIT  | | B20 | free   |
+   The sign "-" means that the     | A21 | -RESET | | B21 | -ROMEN |
+   signal is active low level.     | A22 | ROMDIS | | B22 | -RAMEN |
+                                   | A23 | RAMDIS | | B23 | CURSOR |
+                                   | A24 | L.PEN  | | B24 | -EXP   |
+                                   | A25 | GND    | | B25 | CLK    |
+                                   | A26 | MAP14  | | B26 | MAP15  |
+                                   | A27 | MAP16  | | B27 | MAP17  |
+                                   | A28 | MAP18  | | B28 | MAPBLK |
+                                   | A29 | -INTA  | | B29 | -DIS   |
+                                   | A30 | GNDA   | | B30 | DIS    |
+                                   | A31 | UCCA   | | B31 | HIGHTZ |
+                                   +-----+--------+ +-----+--------+
+
+                      TESTIMONY OF ACCEPTANCE AND SALE
+
+Personal computer "ALESTE 520 EX" output control and Test passed.
+
+     TCI Stamp
+     Released "___"__________________________ 199___ g.
+     Production number No ____________________________
+     Prodan______________________________ Date of sale
+
+  Warranty:
+  The manufacturer guarantees the efficiency of your computer when compliance
+with the rules of storage and use within six months from the date of sale.
+
+  The manufacturer makes gratuitous repair, replacement computer and its
+components during the warranty period, if the failure was caused by the
+manufacturer.
+
+  Claims without a mark on the sale will not be accepted.
+
+  If you have questions call:
+
+                                  23-67-48
+
+  from 16.00 to 18.00 hours except on Saturdays and Sundays.
+
+  Connect your computer to your TV:
+
+                                  33-51-42

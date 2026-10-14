@@ -1,0 +1,355 @@
+I/O Ports for [[Aleste 520EX]]
+
+== I/O Map (Overview) ==
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|'''I/O'''||'''Decoded as'''||'''Port'''||'''Read'''||'''Write''' 
+|-
+|#7CXX||%0xxxxx00 xxxxxxxx||Aleste RAM Mapper page 0 (extended "Gate Array 3")||Read||Write
+|-
+|#7DXX||%0xxxxx01 xxxxxxxx||Aleste RAM Mapper page 1 (extended "Gate Array 3")||Read||Write
+|-
+|#7EXX||%0xxxxx10 xxxxxxxx||Aleste RAM Mapper page 2 (extended "Gate Array 3")||Read||Write
+|-
+|#7FXX||%0xxxxx11 xxxxxxxx||Aleste RAM Mapper page 3 (extended "Gate Array 3")||Read||Write
+|-
+|#7FXX||%0xxxxxxx xxxxxxxx||Aleste Multiport (customized [[Gate Array]])||-||Write
+|-
+|#BCXX||%x0xxxx00 xxxxxxxx||6845 [[CRTC]] Index|| - ||Write
+|-
+|#BDXX||%x0xxxx01 xxxxxxxx||6845 [[CRTC]] Data Out|| - ||Write
+|-
+|#BEXX||%x0xxxx10 xxxxxxxx||6845 [[CRTC]] Status (as far as supported)||Read|| - 
+|-
+|#BFXX||%x0xxxx11 xxxxxxxx||6845 [[CRTC]] Data In (as far as supported)||Read|| - 
+|-
+|#DFXX||%xx0xxxxx xxxxxxxx||[[Upper ROM Bank Number]] (bank 3 = Aleste Bootmenu)|| - ||Write
+|-
+|#EEXX||%xxx0xxx0 xxxxxxxx||Aleste [[8251 USART chip]] (RS232/Mouse) Data|| Read ||Write
+|-
+|#EFXX||%xxx0xxx1 xxxxxxxx||Aleste [[8251 USART chip]] (RS232/Mouse) Control/Status|| Read ||Write
+|-
+|#F4XX||%xxxx0x00 xxxxxxxx||[[8255]] PIO Port A (PSG/8253 Timer/Real-Time Clock data)||Read||Write
+|-
+|#F5XX||%xxxx0x01 xxxxxxxx||[[8255]] PIO Port B (Vsync,[[Printer Port|PrnBusy]],Tape,etc.)||Read|| - 
+|-
+|#F6XX||%xxxx0x10 xxxxxxxx||[[8255]] PIO Port C (KeybRow, Real-Time-Clock control,Tape,[[PSG]] Control)|| - ||Write
+|-
+|#F7XX||%xxxx0x11 xxxxxxxx||[[8255]] PIO Control-Register|| - ||Write
+|-
+|#FA7E||%xxxxx0x0 0xxxxxxx||Floppy Motor Control (for [[765 FDC]])|| - ||Write
+|-
+|#FABC||%xxxxx0x0 10xxxx00||Aleste EXTPORT with CS53: Forward PPI Port A to 8253 Timer 0|| - ||Write
+|-
+|#FABD||%xxxxx0x0 10xxxx01||Aleste EXTPORT with CS53: Forward PPI Port A to 8253 Timer 1|| - ||Write
+|-
+|#FABE||%xxxxx0x0 10xxxx10||Aleste EXTPORT with CS53: Forward PPI Port A to 8253 Timer 2|| - ||Write
+|-
+|#FABF||%xxxxx0x0 10xxxx11||Aleste EXTPORT with CS53: Forward PPI Port A to 8253 Control|| - ||Write
+|-
+|#FABF||%xxxxx0x0 10xxxxxx||Aleste EXTPORT|| - ||Write
+|-
+|#FB7E||%xxxxx0x1 0xxxxxx0||[[765 FDC]] (internal) Status Register||Read|| - 
+|-
+|#FB7F||%xxxxx0x1 0xxxxxx1||[[765 FDC]] (internal) Data Register||Read||Write
+|}
+
+== Ext Port (Port FABFh) ==
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''bit''||Action
+|-
+|7-6||not used
+|-
+|5-4||PPI Port A usage
+* 0 = PSG (Sound Chip; default, as in CPC) (With PPI.Port C: BC1/BDIR)
+* 1 = Reserved (would access both PSG and 8253 together)
+* 2 = RTC (Real-Time Clock) (With PPI.Port C: Bit2=DS, Bit1=AS, Bit0=R/W. So combinations are 2, write address, 4 write data, 5 read data)
+* 3 = 8253 (Baudrate/Future Timer) (With address lines A0 and A1 = register selection)
+|-
+|3||force video to black
+|-
+|2||MAPMOD
+* When MAPMOD=0: Uses CPC-style 27-color palette, and CPC6128-style RAM banking
+* When MAPMOD=1: Uses special 64-color palette, and extended RAM mapper
+|-
+|1||Enables high resolution in X. Also changes some clock frequences. Controls decoding of video address.
+|-
+|0||Not fully understood yet. Controls decoding of video address
+|}
+
+== Aleste Gate Array (aka Patasonic's Multiport) (Port 7Fxxh) ==
+
+Aleste "Gate Array" is similar in functionality to the Gate-Array in the CPC/Plus.
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''Data bit 7''||''Data bit 6''||Action
+|-
+|0||0||Gate Array Register 0 - Palette index
+|-
+|0||1||Gate Array Register 1 - Palette data
+|-
+|1||0||Gate Array Register 2 - Mode, Rom enable, Leds
+|-
+|1||1||Gate Array Register 3 - RAM banking
+|-
+|}
+
+=== Gate Array Register 0 - Palette Index ===
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''bit''||''Value''
+|-
+|7..6||Must be 0 (select register 0)
+|-
+|5||not used
+|-
+|4..0||Palette Index (00h..0Fh=Ink 0-15, 10h=Border, 11..1Fh=same as 10h)
+|}
+Selects the palette index (to be used by next write to Palette Data).
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''Depth''||''Normal Inks (as on CPC)''||''Secondary Inks (Aleste FUTURE Feature)''
+|-
+|1 bit||0..1||2..3
+|-
+|2 bit||0..3||4..7
+|-
+|4 bit||0..15||N/A (uses 0..15 too)
+|}
+
+=== Gate Array Register 1 - Palette Data ===
+
+The number is converted by IC D62. 
+
+* When MAPPER is set in EXTPORT, then the numbers effectively define a R,G,B colour with 2 bits per element, but the rom then changes the order of the bits before it gets to the hardware.
+* When MAPPER is not set, the number is equivalent to the CPC's Gate-Array colour value, but this is looked up in IC D62 and converted into a 2-bit per element R,G,B for the aleste video hardware.
+
+* '''Note''' - The CPC supports 3 intensities per color (0%, 50%, 100%), the Aleste supports four intensities (0%, 33%, 66%, 100%). In the CPC-style 27-color mode, the Aleste uses only the dark intensities (0%, 33%, 66%), this gives it a proper ratio (66% being twice 33%), the downside is that the 64-color mode appears brighter - so one may need to adjust brightness on the monitor whenever switching between 27-color and 64-color modes.
+
+=== Gate Array Register 2 - Video Mode, ROM enable, LEDs ===
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''bit''||Action
+|-
+|7||1
+|-
+|6||0
+|-
+|5||CAPS LED
+|-
+|4||RUS LED
+|-
+|3||Upper rom enable/disable
+|-
+|2||Lower rom enable/disable
+|-
+|1..0||Mode
+|}
+
+bit 0,1 define the mode. The actual resolution is then dependant on bit 1 of EXTPORT.
+When HIGHTX is 0, CPC modes are chosen. When HIGHTX is 1, Aleste modes are chosen.
+
+CPC modes:
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''bit 1''||''bit 0''||Mode
+|-
+|0||0||160x200 (16 colours)
+|-
+|0||1||320x200 (4 colours)
+|-
+|1||0||640x200 (2 colours)
+|-
+|1||1||Don't know. On CPC this is 160x200 (4 colours)
+|-
+|}
+
+Aleste modes:
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''bit 1''||''bit 0''||Mode
+|-
+|0||0||Don't know
+|-
+|0||1||Don't know
+|-
+|1||0||Don't know
+|-
+|1||1||Seems to be 320x200 (16 colours)
+|-
+|}
+
+=== Gate Array Register 3 - RAM banking (in CPC-style MAPMOD=0) ===
+
+Controls RAM Banking, similar to the Gate Array on CPC6128 (or, more specific, similar to the 16L8 PAL IC which assists the CPC6128s Gate Array).
+
+In the Aleste register 3 is effectively Mapper select.
+
+Writing to port #7Fxx with bit 7 and bit 6 of data set to 1 can be used to set page 3 RAM bank in Aleste mapper mode, or to define CPC RAM configuration in CPC mode.
+
+'''Actually''', it seems to work more like an [[Inicron RAM-Box]] (which isn't fully compatible with the dk'tronics style [[Standard Memory Expansions]]).
+
+=== Gate Array Register 3 - RAM banking (in Aleste's special MAPMOD=1) ===
+
+Four I/O ports control the mapper:
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|'''I/O'''||'''Decoded as'''||'''Page'''||'''Memory region'''
+|-
+|#7CXX||%0xxxxx00 xxxxxxxx||page 0||&0000-&3fff
+|-
+|#7DXX||%0xxxxx01 xxxxxxxx||page 1||&4000-&7fff
+|-
+|#7EXX||%0xxxxx10 xxxxxxxx||page 2||&8000-&bfff
+|-
+|#7FXX||%0xxxxx11 xxxxxxxx||page 3||&c000-&ffff
+|}
+
+The decoding of the I/O port for the mapper uses bit 15 of the I/O address in the same way as the Aleste "Gate Array".
+
+Address Bit 9,8 define which page.
+
+To avoid writing to the Aleste "Gate-Array", Data bits 7 and 6 must be 1.
+
+The remaining bits define the RAM block/configuration to use.
+
+In Aleste mapper mode, writing to the mapper changes the RAM for one page.
+
+It is not know:
+* Must you write to #7Fxx in CPC mode to define RAM configuration or can you also use #7Cxx, #7Dxx, #7Exx for same effect
+* When you write CPC RAM configuration is it mirrored in all mapper registers?
+
+== Upper ROM Bank ==
+
+Works like the [[Upper ROM Bank Number]] on CPCs. The banks used for the Aleste BIOS are:
+  00h BASIC    (bytes in 4000h..7FFFh in the Aleste's 64K EPROM)
+  03h BOOTMENU (bytes in C000h..FFFFh in the Aleste's 64K EPROM)
+  07h AMSDOS   (bytes in 8000h..BFFFh in the Aleste's 64K EPROM)
+All other values 01h..02h, 04h..06h, 08h..FFh do select BASIC, too.
+
+The BOOTMENU is an aleste specific ROM bank. BASIC and AMSDOS are 1:1 same as in CPC6128. The BIOS (lower ROM bank) is almost same as in CPC6128 (only the Startup Message and Printer handling are modified). For details, see:
+* [[Media:AlesteBiosDisassembly.txt]] - Disassembly of differences between CPC6128 and Aleste BIOS
+* [[Media:AlesteBootmenuRomBank3.asm]] - Original source code for BOOTMENU (Upper ROM Bank 3)
+
+== PPI 8255 ==
+
+Works similar to the [[8255]] in the CPC (see there for details). Differences are listed below.
+
+=== PPI Port A (Port F4xxh) ===
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''Bit''||''Description''||''Usage in CPC''||''Usage in Aleste''
+|-
+|7-0||PSG.DATA||[[PSG]] Databus (Sound/Keyboard/Joystick)||[[PSG]] Databus (Sound/Keyboard/Joystick/Printer), and Baudrate/Future Timer databus, and RTC databus)
+|-
+|}
+
+Ext Port (Port FABFh) controls whether PSG, RTC, or Timer is selected.
+* For info on Baudrate/Future Timer see [[8253 chip]].
+* For info on Real Time Clock see [[PC compatible RTC chip]].
+
+=== PPI Port B (Port F5xxh) ===
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''Bit''||''Description''||''Usage in CPC''||''Usage in Aleste''
+|-
+|7||CAS.IN||Cassette data input||Same as on CPC
+|-
+|6||PRN.BUSY||Parallel/Printer port ready signal, "1" = not ready, "0" = Ready||Same as on CPC
+|-
+|5||/EXP||Expansion Port /EXP pin||Wired to GND (uh, BUT, Aleste Expansion Port DOES have an /EXP pin?)
+|-
+|4||LK4||Screen Refresh Rate ("1"=50Hz, "0"=60Hz)||Same as in CPC
+|-
+|3||LK3||Manufacturer ID bit3||rowspan=2|LK3 is shortcut to LK2, and wired to a pull-up resistor
+|-
+|2||LK2||Manufacturer ID bit2
+|-
+|1||LK1||Manufacturer ID bit1||/DISCINT (the /INT pin from FDC 765)
+|-
+|0||[[CRTC]] VSYNC||Vertical Sync ("1"=VSYNC active, "0"=VSYNC inactive)||Same as on CPC (though using emulated timings from VDKEY eprom)
+|-
+|}
+
+=== PPI Port C (Port F6xxh) ===
+
+{|{{Prettytable|width: 700px; font-size: 2em;}}
+|''Bit''||''Description''||''Usage in CPC''||''Usage in Aleste''
+|-
+|7||PSG BDIR||rowspan=2|PSG function selection||rowspan=2|Same as in CPC
+|-
+|6||PSG BC1
+|-
+|5||Cassette Write data||Cassette Out (and Printer Bit7, see [[8bit Printer Ports]])||Cassette Out
+|-
+|4||Cassette Motor Control||Cassette Motor (0=Off, 1=On)||Printer Strobe (0=High, 1=Low)
+|-
+|3||rowspan=4|Keyboard row||rowspan=4|10 rows (0..9)||rowspan=4|11 rows (0..10), and also used for RTC control signals
+|-
+|2
+|-
+|1
+|-
+|0
+|-
+|}
+
+=== PPI Control (Port F7xxh) ===
+
+This register has two different functions depending on bit7 of the data written to this register.
+
+See the normal CPCs [[8255]] description for details.
+
+== Keyboard ==
+
+The Aleste uses a MSX keyboard, as seen by the characteristic five function keys. The mainboard contains some excessive TTL logic, assisted by the upper data bits of the VDKEY eprom, that translates the MSX matrix to a CPC matrix.
+
+So, at I/O port level, the CPU "sees" a CPC matrix, not a MSX matrix. When running MSXDOS, this leads to the funny situation that MSXDOS must undo the hardware MSX-to-CPC translation by some software CPC-to-MSX translation.
+
+The keyboard has some additional keys, which aren't on normal CPC keyboards:
+* '''F1/F6, F2/F7, F3/F8, F4/F9, F5/F10''' - MSX-style function keys, mapped to keyboard row 10, bits 7,6,5,4,3.
+* '''HELP, INS, b''' - additional keys, mapped to keyboard row 10, bits 2,1,0.
+* '''R/L''' - Russian/Latin mode, mapped to keyboard row 9, bit6 (aka joystick Fire3).
+* '''RES''' - Reset button, goes to /RESET signal.
+* '''Four unknown keys''' - These keys (above the numeric keypad) may be unused, or having same function as other keys?
+
+The Aleste has a JCUKEN keyboard, rather than a QWERTY keyboard.
+* '''Unknown''' if this done by hardware, or by patched CPC bios (?)
+* Normally, the key next to TAB '''should''' be Row8.Bit3 in the CPC matrix. And the BIOS should assign "Q" to it for english QWERTY keyboards, "A" for french "AZERTY" keyboards - or "J" for russian JCUKEN keyboards (though not sure if Patisonic has implemented it that way).
+
+  _____ _____ _____ _____ _____                 _____ _____ _____   _____ _____
+ |F1/6 |F2/7 |F3/8 |F4/9 |F5/10|               |HELP |INS  | DEL | |N/A  | RES |
+ |_____|_____|_____|_____|_____|               |_____|_____|_____| |_____|_____|
+  _____ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ _____   ___ ___ ___
+ | ESC | ; | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | _ | b |  BS | |N/A|N/A|N/A|
+ |_____|___|___|___|___|___|___|___|___|___|___|___|___|___|_____| |___|___|___|
+ |  TAB  | J | C | U | K | E | N | G | { | } | Z | H | : | / |   | | F7| F8| F9|
+ |_______|___|___|___|___|___|___|___|___|___|___|___|___|___|   | |___|___|___|
+ |  CTRL  | F | Y | W | A | P | R | O | L | D | V | \ | . |RETURN| | F4| F5| F6|
+ |________|___|___|___|___|___|___|___|___|___|___|___|___|______| |___|___|___|
+ |CAPS| R/L | Q | | | S | M | I | T | X | B | @ | '  |   | U |   | | F1| F2| F3|
+ |____|_____|___|___|___|___|___|___|___|___|___|____| L |___| R | |___|___|___|
+ |  SHIFT | COPY|         SPACE              | SHIFT |   | D |   | | F0| F.|ENT|
+ |________|_____|____________________________|_______|___|___|___| |___|___|___|
+
+== Aleste 8bit Printer Port ==
+
+* Printer data-bits are connected to AY I/O port B (PSG register 15).
+* Printer strobe is connected to PPI 8255 port C bit 4. The strobe is negated by the hardware.
+* Printer busy is connected to PPI 8255 port B bit 6.
+* All of the above PPI and PSG registers are bi-directional.
+
+This is different as that in the CPC (the CPCs [[Printer Port]] uses Port EFXXh for one-directional 7bit data plus strobe).
+
+== Joystick ==
+
+The Aleste has a 7pin joystick connector. Aside from the different pin-outs, it's the same as the normal 9pin connector on CPCs. Except that: 
+* There's no COM2 signal (no way to attach an Y-cable for 2nd joystick to the connector)
+* There's no FIRE3 signal (which is undocumented, rarely used pin on CPC) (NB. The Aleste uses FIRE3 as R/L key on the keyboard).
+
+== Mouse ==
+
+The built-in RS232 port can be used to connect a serial mouse.
+* See [[Serial RS232 Mouse]] for details on the protocol
+
+[[Category:Non CPC Computers]][[Category:Clones]]

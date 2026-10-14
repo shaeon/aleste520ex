@@ -1,0 +1,6 @@
+CORE_ID=aleste520ex
+PROJECT_NAME=aleste520ex
+VERSION=1.0
+BITSTREAM_FILE=output_files/aleste.rbf
+EXTRA_BINARIES=README.md
+EXTRA_SUBMODULES=aleste-lx common/mist-modules

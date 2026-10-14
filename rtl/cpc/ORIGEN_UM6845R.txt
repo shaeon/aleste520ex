@@ -1,0 +1,3 @@
+UM6845R.v: copia sin modificar de Amstrad_MiST (gyurco), autor Sorgelig, GPL v2.
+Origen: https://github.com/gyurco/Amstrad_MiST
+commit: ee90a208ea0c8595c67371e0aeba15065437c31b

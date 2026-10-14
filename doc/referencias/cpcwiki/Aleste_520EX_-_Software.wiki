@@ -1,0 +1,36 @@
+Software for [[Aleste 520EX]]
+
+The computer works with Amstrad [[CP/M]] and MSX-DOS as well. '''MSX-DOS''' is a CP/M clone, which uses a FAT filesystem, as used on MSX and MS-DOS computers, instead of the normal CP/M filesystem.
+
+== Software ==
+* MSXDOS
+* С compiler
+* GUI Debugger
+* GameBIOS with VDP emulator
+* Text editor PowerEdit
+* Text files converter TRC. Convert between  MSX, Aleste, and DOS
+* Disk Fixer (ported)
+* Disk Edit (ported)
+* Image viewer
+* Player of S3M, STM files
+* Editor of S3M, STM files
+* Games ported from MSX2
+** VampireKiller
+** KingValery 2
+** FireBird
+** MetalGear
+
+== VDP Emulator aka GameBIOS ==
+
+It is not clear exactly what this is.
+
+It seems to describe a collection of software functions (BIOS or library) which aids with converting MSX or MSX2 games to the Aleste.
+
+Certainly the games that have been converted to Aleste are patched, and it seems they do not access any special I/O ports.
+
+It doesn't appear to be an emulator as such, and it seems the Aleste should be modified to run at 8Mhz to run the games at sufficient speed.
+
+Computer have "GameBios" with is emulator of VDP9938. it was sufficiently - to replace the first several kilos-byte of game and MSX2 game worked. Certainly, video processor MSX is by apparatus sharpened for the games, but they worked sufficiently rapidly to 8MGts of game on "alesta" in order in them to play. Game "FireBird" typical
+"vertical scroller" worked very well.
+
+[[Category:Non CPC Computers]][[Category:Clones]]

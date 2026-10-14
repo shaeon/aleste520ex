@@ -1,0 +1,19 @@
+# King's Valley (Konami RC-727, 1985) -> Aleste 520EX (VALLEY.DAT del disco msx-games)
+# ROM original: 16384 bytes, md5 c5698102c7e452b03fc7b9bb80a3768a
+# resultado:    md5 16f5123446d335963edbe825fc8193ef
+# formato: desplazamiento (hex) y bytes nuevos (hex)
+0001A f3cd367bfbc9fbcdc845cda340cd030018f40000000000000000000000000000000000
+0003F e480
+00044 772336c9
+0009A c32040
+004B1 00df
+004C5 00df
+005A5 21
+005AD ab44
+00B75 c9
+00BF2 10
+00C09 a0a0
+00C0D a6a6
+01D27 3e0038033e2000
+01D35 c9
+01D65 00df

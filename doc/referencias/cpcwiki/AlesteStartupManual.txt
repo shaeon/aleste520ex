@@ -1,0 +1,133 @@
+        Translation of the russian "Startup Manual" for Aleste 520EX
+
+-------------------------------------------------------------------------------
+
+                 On startup and adjustment of your computer.
+
+  Recommendations before first inclusion the most common and here we will
+not write about them. Carefully collected from healthy details computer
+must earn immediately. However at use Chipset different series may observed
+unstable work computer in certain modes. For reliable work We recommend
+immediately before the first inclusion to make two improvements which will
+be written below.
+
+  The first inclusion, we recommend without ROM D31. Below are diagrams of
+some signals in this mode. Also are Chart main signals in Depending on the
+mode screen.
+
+  We recommend apply Products these on wiring diagram board. All programmable
+chips and basic BIS should be installed on the panels (D70 - optional). Case
+in Volume what we repeatedly observed cases of failure drive controller so
+that the disk reads were normal and at record disk information on it port;
+also does formatting. Moreover occur it can not permanently.
+
+  On time adjustment should vypayat right on board output resistor R6 order
+to include them image.
+
+  For more reliable operation of the scheme must also set capacitor capacity
+510 pF between 3 and 7 findings D77.
+
+  Depending on the instance D65 is dictated by the need capacitor C4, and
+determined she the absence of small horizontal synchronization failures in
+different modes graphics.
+
+  Weak interference the image in low graphics mode permission may observed
+because different Performance Chipset D50 - D53. They eliminated installation
+capacitor small capacitance (several tens of pF) one of the signals XTAL, RRC
+or MVI.
+
+  If the D87, D88 are applied IR26, some resistors R28 - R31 can not install,
+and R32 need necessarily.
+
+  If you do not do revision 1, then the output should be 9 D24 install
+capacitor 30 - 80 pF, and if as D87 D88 applied IR32, the diode VD12 can
+replace the jumper and Resistors R28-R32 install. In this case it is better
+to apply IR32.
+
+  If you do not do revision 2, then D54 is better to use 555 series and D26
+Series 1533. In this case, on the spot D62 may work not all instances of chips.
+
+-------------------------------------------------------------------------------
+
+                                 On the PCB.
+
+  It should be noted that the printed circuit board is only for Corps similar
+corps computers PATISONIC 48ST, FORUM AFFILIATES 2 and hardly advisable to
+install it another body.
+
+  In print board there are 4 errors. To eliminate them must do following:
+cut the wire coming left on conclusion 8 D73 (near the diode VD9) and join
+the rest left part this conductor with withdrawal 8 D72; cut connection
+between findings 13 and 14 of D66 and the bottom of board output resistor
+R15 solder found 13 D66; to post a systematic connector signal -WAIT; remove
+closure of the contact area vias on the bus +5 V chip under D66.
+
+                                Refinement 1.
+
+             1+---+    1533LI1
+  D88/6 ------Ý & Ý
+             2Ý   Ý3
+  D32/2 ------Ý   +----+
+              +---+    Ý
+          +------------+
+          Ý  4+---+
+          +---Ý & Ý
+             5Ý   Ý6
+  D40/8 ------Ý   +----- D24/9
+              +---+
+
+  The elements VD12 and R136 excluded. MORE chip soldered findings Food on D29.
+Conclusions 1 and 2 connected with lower on board contact sites VD12 and R136.
+Conclusion 6 connects with top contact platform R136. At the conclusion of 1
+additional Products need set 2K resistor to +5 V if applicable Products IR32.
+
+                                Refinement 2.
+
+  D39/15 -----------------------+
+                  4+-----+      Ý   10+-----+
+  D41/11 ----------ÝS  T Ý      +-----ÝS  T Ý
+                  3Ý     Ý5         11Ý     Ý9
+  D39/14 ----------ÝC   Q+------------ÝC   Q+-------------- D54/15
+  (CLK)           2Ý     Ý          12Ý     Ý
+            +------ÝD   _Ý6       +---ÝD   _Ý8
+            Ý     1Ý_   Q+--+       13Ý_   Q+--
+            Ý  + --ÝR    Ý  Ý     + --ÝR    Ý
+            Ý      +-----+  Ý         +-----+
+            +---------------+                      D54/15
+                                      1533TM2
+
+  When This excluded elements C5 and R134 (last closed with a jumper). MORE
+chip soldered findings Food on D42. Conclusions connected with closest pads
+required signals. Printed conductor coming to the conclusion that 15 D54, cut.
+
+-------------------------------------------------------------------------------
+
+                 On the introduction of the regime "turbo".
+
+  We have a scheme on two chips (TM2, and LA3) allows you to enter this mode.
+But for reliable operation of computer in this mode requires the processor
+Z80H or TOSHIBA TMPZ84C00AP-8. In this mode will not boot some Games in mode
+AMSTRAD due to the reduced waiting time at positioning head drive. This mode
+is useful mainly to those who wrote fairly large program for reduce compile
+time. If you want to do this option, contact the firm PATISONIC.
+
+-------------------------------------------------------------------------------
+
+             On increasing the capacity of a disk mode AMSTRAD.
+
+  To do this, you must enter switch sides disc. Suit any closing switch with
+one group and fixation. One conclusion that normally open group joined with a
+signal-SIDE, and the second - to GND. When the closed switch used second side
+disc. In firm computer AMSTRAD CPC 6128 was applied unilateral drive and
+Gondola turning upside discs with a diameter 3,00 (!) inches. Closure switch
+equivalent reversal disc. CAUTION When MSX-DOS switch must be opened.
+
+-------------------------------------------------------------------------------
+
+                              Translation Notes
+
+The two so-called "1533xxx" chips are (similar) to russian "K555xxx" chips,
+maybe 1533 series and 555 series refer to western 74LS and 74HC variants or so.
+  1533LI1 = K555LI1 = 74LS08 = Quad AND gates
+  1533TM2 = K555TM2 = 74LS74 = Dual flipflop
+Expressions like "D41/11" do refer to Pin 11 of chip D41 in the schematics.

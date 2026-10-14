@@ -1,0 +1,3 @@
+# Aleste LX para la Poseidon
+QUARTUS_VERSION = "22.1"
+PROJECT_REVISION = "aleste_poseidon"

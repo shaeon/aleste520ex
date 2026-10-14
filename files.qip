@@ -1,0 +1,58 @@
+# Ficheros comunes a todas las placas (rutas con qip_path, valen desde
+# cualquier carpeta de placa). El PLL y el .sdc NO estan aqui: los pone el
+# .qsf de cada placa.
+
+# Modulos MiST (user_io, data_io, osd...)
+set_global_assignment -name QIP_FILE [file join $::quartus(qip_path) common/mist-modules/mist.qip]
+
+# Aleste LX, sin tocar (submodulo aleste-lx, rama dev)
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/reset/reset_controller.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/memory/sdram/sdram_wishbone.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/mc6845mod.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/hdmi_scaler/dual_port_ram.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/hdmi_scaler/hdmi_scaler.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc_colors.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/palette/msx_colors.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/color_palette.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/video_buffer/video_buffer.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/pixel_pipeline.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/systems/aleste_video/wb_arbiter.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/systems/aleste_video/address_decoder.sv]
+# Fase 2: CPU, MMU, arbitro y watchdog
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/cpu/tv80/tv80_core.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/cpu/tv80/tv80_reg.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/cpu/tv80/tv80_alu.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/cpu/tv80/tv80_mcode.v]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/z80_system.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/io/ppi/i8255_wb.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/systems/aleste_system/z80_debug.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/mmu_legacy.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/systems/aleste_system/system_arbiter.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/interconnect/wishbone/wb_wdt_simple.sv]
+
+# Port a MiST. video_ctrl_vga.sv y memory_arbiter.sv son copias GENERADAS
+# del Aleste LX (tools/gen_rtl.py); los originales no se compilan.
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/memory_arbiter.sv]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/tv80lx.v]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/mmu_native.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/vga_timing.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/video_ctrl_vga.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/mist_loader.sv]
+# Video del modo CPC: UM6845R (Sorgelig, GPL v2, de Amstrad_MiST) y Gate Array
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/UM6845R.v]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/cpc_video.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/kbd_520ex.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/rtc146818.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/magic_sound.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/serial_mouse.sv]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/kempston_mouse.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/symbiface_mouse.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/multiplay_mouse.v]
+set_global_assignment -name VERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/amx_mouse.v]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/tzxplayer.sv]
+# Disquetera: u765 de Amstrad_MiST (GPL) con INT y con imagenes raw (tools/gen_u765.py)
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/u765.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/YM2149.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/aleste_core.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/aleste_mist_top.sv]
+set_global_assignment -name VHDL_FILE [file join $::quartus(qip_path) common/mist-modules/dac.vhd]
