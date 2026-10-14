@@ -2,7 +2,7 @@
 
 El Z80 (tv80lx) y la MMU nativa del Aleste LX arrancan desde una ROM que el
 firmware MiST carga de la SD. Se comprueba con una ROM de diagnostico propia
-(`rom/diag.asm`) que ensena el resultado en pantalla.
+(`tools/diag/diag.asm`) que ensena el resultado en pantalla.
 
 ## Que se ha anadido
 
@@ -40,9 +40,9 @@ Quartus Lite rechaza (uso antes de declarar, `localparam` en `#(...)`,
 variables con valor inicial no constante, `;;`). Sobre los originales encuentra los
 problemas conocidos; sobre los ficheros del proyecto, ninguno.
 
-## ROM de diagnostico (`rom/`)
+## ROM de diagnostico (`tools/diag/`)
 
-`rom/diag.asm`, ensamblado con pasmo (`make` en `rom/`; ya va hecho en
+`tools/diag/diag.asm`, ensamblado con pasmo (`make` en `tools/diag/`; ya va hecho en
 `sd/DIAG.ROM`). En modo supervisor:
 
 1. Pone el CRTC en 160x200x16 y la paleta de prueba por MMIO (pagina 2).
@@ -59,7 +59,7 @@ Resultado en simulacion (`doc/img/fase2_pantalla_sim.png`): las cuatro pruebas O
 
 ## Simulacion
 
-`make fase2` en `sim/`: el banco `tb_fase2.sv` carga `rom/DIAG.ROM` por el
+`make fase2` en `sim/`: el banco `tb_fase2.sv` carga `tools/diag/DIAG.ROM` por el
 indice 0 como lo haria el firmware y comprueba:
 
 - que la CPU no corre sin ROM ni arranca antes de acabar la carga

@@ -241,8 +241,16 @@ GitHub descarga la página HTML y no el disco. Usa el botón *Download* (o
 3. En BASIC: `|TAPE`, luego `RUN"` y pulsa una tecla en «Press PLAY then any
    key». El motor lo controla el propio ordenador.
 
+**Con un magnetófono de verdad** (Poseidon, SiDi y Calypso, por la entrada de
+audio de la placa; la MiST no tiene): conecta la salida del magnetófono a la
+entrada de audio, haz lo mismo que en el paso 3 y pulsa PLAY en el
+magnetófono. Mientras se reproduce un fichero CDT/TZX manda el fichero; si no,
+la entrada de audio. Si no carga, prueba *Invert tape in* y el volumen del
+magnetófono.
+
 En *Tape & audio*:
-- *Tape sound*: oír la cinta por los altavoces.
+- *Tape sound*: oír la cinta por los altavoces (el fichero o, con el motor en
+  marcha, la entrada de audio).
 - *Invert tape in*: invierte la señal, para cintas que no cargan.
 - *Test tone*: un tono de 1 kHz para comprobar el audio.
 

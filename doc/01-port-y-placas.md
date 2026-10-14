@@ -27,19 +27,23 @@ macros por placa y una carpeta por placa.
 ```
 aleste-lx/          submodulo: Aleste LX (rama dev), sin modificar
 common/mist-modules submodulo: user_io, data_io, osd...
-rtl/                top MiST, nucleo, cargador, barrido VGA y copias
-                    parcheadas (generadas) de diez ficheros del Aleste LX
-poseidon/           proyecto Quartus, PLL y .sdc de la Poseidon
-sim/                banco de pruebas Verilator con modelo de SDRAM
-tools/              gen_rtl.py y gen_u765.py (parches), aleste_wbs.py (guiones
-                    de bus), raw2edsk.py (discos raw a EDSK), bdos_2drives.py
-                    (segunda disquetera en MSX-DOS), make_msxdisk.py (disquete
-                    de MSX-DOS a partir de una carpeta), make_rom.py,
-                    make_rom.py (ALESTE.ROM del modo CPC),
-                    check_quartus.py (construcciones que Quartus rechaza)
-sd/                 ficheros de prueba para la SD
-rom/                ROM de diagnostico de la fase 2 (pasmo)
-doc/                notas de cada fase y referencia del 520EX
+rtl/                top MiST, nucleo, cargador, barrido VGA, hardware del
+                    520EX (rtl/cpc/) y copias parcheadas (generadas) de
+                    ficheros del Aleste LX
+mist/ poseidon/     proyecto Quartus, PLL y .sdc de cada placa
+sidi/ calypso/
+sim/                bancos de prueba de Verilator con modelo de SDRAM
+tools/              gen_rtl.py y gen_u765.py (parches), make_rom.py
+                    (ALESTE.ROM), make_msxdisk.py y make_amsdisk.py (discos),
+                    make_cdt.py (cintas), raw2edsk.py, bdos_2drives.py,
+                    dos_preload.py, msxrom2aleste.py (cartuchos de MSX),
+                    aleste_wbs.py (guiones de bus), check_quartus.py
+                    (construcciones que Quartus rechaza), gen_font.py
+tools/diag/         ROM de diagnostico de la fase 2 (pasmo)
+tools/gb2/          cargador de la GameBios v2 (juegos de MSX2)
+msx/                TIME.COM (pone el reloj desde MSX-DOS)
+sd/                 ficheros para la tarjeta SD (ROM, CMOS, disco en sd/dsk/)
+doc/                guia de uso, notas de cada fase y referencia del 520EX
 ```
 
 ## Compilar

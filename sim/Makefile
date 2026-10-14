@@ -47,7 +47,7 @@ obj2/Vtb_fase2: $(SRCS) tb_fase2.sv
 	verilator $(FLAGS2) $(SRCS) tb_fase2.sv
 
 fase2: obj2/Vtb_fase2
-	$(MAKE) -C ../rom
+	$(MAKE) -C ../tools/diag
 	cp -f $(A)/components/video/palette/*.mem $(ROOT)/rtl/*.mem obj2/ 2>/dev/null; cd obj2 && ./Vtb_fase2 +rom=../../tools/diag/DIAG.ROM
 	-python3 -c "from PIL import Image; Image.open('obj2/pantalla.ppm').save('obj2/pantalla.png')" 2>/dev/null
 

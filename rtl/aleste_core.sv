@@ -97,6 +97,7 @@ module aleste_core #(
     input  logic [2:0]  video_v_off,    // OSD: centrado vertical
     input  logic        tape_sound,     // OSD: se oye la cinta mientras se reproduce
     input  logic        tape_invert,    // OSD: invertir la entrada de cinta
+    input  logic        tape_ext,       // entrada de cinta de la placa (AUDIO_IN), asincrona
     input  logic        test_tone,      // OSD: tono de prueba de 1 kHz
     input  logic [2:0]  img_mounted,    // 0 A:, 1 B:, 2 ALESTE.CMO (RAM del reloj)
     input  logic        img_wp,
@@ -156,6 +157,8 @@ logic       ms_nmi;                   // MagicSound: NMI al acabar un bloque de 
 logic       rtc_set;                  // poner el reloj en hora con la de MiST
 logic       tape_in;                  // entrada de cinta (PB7 de la PPI)
 logic       tape_read, tape_running;  // reproductor de cintas
+logic       tape_motor;               // motor de la cinta (PC4 de la PPI, con inercia)
+logic       tape_src;                 // cinta: fichero CDT/TZX o entrada de la placa
 logic       cmos_we, cmos_clean, rtc_dirty;   // ALESTE.CMO (RAM del reloj en la SD)
 logic [5:0] cmos_addr;
 logic [7:0] cmos_din, cmos_dout;
@@ -596,7 +599,7 @@ always_ff @(posedge clk_bus) begin
 end
 localparam logic signed [15:0] TAPE_LEVEL = 16'sd4096;
 wire signed [15:0] tape_audio = test_tone                   ? (tone      ? TAPE_LEVEL : -TAPE_LEVEL)
-                              : (tape_sound && tape_running) ? (tape_read ? TAPE_LEVEL : -TAPE_LEVEL)
+                              : (tape_sound && (tape_running || tape_motor)) ? (tape_src ? TAPE_LEVEL : -TAPE_LEVEL)
                               : 16'sd0;
 assign audio_l = 16'($signed({1'b0, mix_l, 4'b0}) + ms_l + tape_audio);
 assign audio_r = 16'($signed({1'b0, mix_r, 4'b0}) + ms_r + tape_audio);
@@ -839,7 +842,6 @@ end
 // el reproductor, con su inercia de 50 ms, se reiniciaba con cada parpadeo y la
 // cinta no arrancaba nunca. Aqui el motor se mantiene 1 ms tras verse PC4 a 1.
 logic [15:0] motor_hold;
-logic        tape_motor;
 always_ff @(posedge clk_bus) begin
     if (ppi_pc_o[4]) begin motor_hold <= 16'd54000; tape_motor <= 1'b1; end
     else if (motor_hold != 0) motor_hold <= motor_hold - 16'd1;
@@ -863,7 +865,13 @@ tzxplayer #(
     .cass_motor(tape_motor & ~tape_end),
     .cass_running(tape_running)
 );
-assign tape_in = tape_read ^ tape_invert;
+// Entrada de cinta: mientras se reproduce un fichero CDT/TZX manda el
+// reproductor; si no, la entrada de audio de la placa (AUDIO_IN, un
+// magnetofono de verdad). "Invert tape in" vale para las dos.
+logic [1:0] tape_ext_s;
+always_ff @(posedge clk_bus) tape_ext_s <= {tape_ext_s[0], tape_ext};
+assign tape_src = tape_running ? tape_read : tape_ext_s[1];
+assign tape_in = tape_src ^ tape_invert;
 
 // ---- Disquetera: uPD765 (rtl/cpc/u765.sv: el de Amstrad_MiST con INT y
 // con imagenes raw, ademas de DSK/EDSK). Puertos del CPC y del 520EX:

@@ -19,7 +19,8 @@ is based on **Aleste LX** by hww (github.com/hww/aleste-lx-fpga-sv).
 
 - **Two machines in one**, chosen from the OSD (*CPC boot*):
   - **AMSTRAD mode**: CPC 6128 compatible, BASIC 1.1 and AMSDOS. Tape
-    loading from CDT/TZX files, AMSDOS disk images (DSK/EDSK), CPC mice
+    loading from CDT/TZX files or from a real tape recorder through the
+    board audio input (not on the MiST), AMSDOS disk images (DSK/EDSK), CPC mice
     (Kempston, SYMBiFACE II, Multiplay, AMX).
   - **Aleste mode**: the 520EX's own BOOTMENU and SETUP, and **MSX-DOS 1**
     with the 520EX BIOS: 640x200 and 320x200 16-colour modes with a 64-colour

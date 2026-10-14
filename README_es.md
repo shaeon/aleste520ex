@@ -20,7 +20,8 @@ la familia MiST. Se basa en **Aleste LX** de hww
 
 - **Dos máquinas en una**, a elegir desde el OSD (*CPC boot*):
   - **Modo AMSTRAD**: compatible con el CPC 6128, BASIC 1.1 y AMSDOS. Carga
-    de cintas desde ficheros CDT/TZX, discos de AMSDOS (DSK/EDSK) y ratones
+    de cintas desde ficheros CDT/TZX o desde un magnetófono por la entrada de
+    audio de la placa (no en la MiST), discos de AMSDOS (DSK/EDSK) y ratones
     del CPC (Kempston, SYMBiFACE II, Multiplay, AMX).
   - **Modo Aleste**: el BOOTMENU y el SETUP del propio 520EX, y **MSX-DOS 1**
     con la BIOS del 520EX: modos de 640x200 y 320x200 en 16 colores con paleta

@@ -334,6 +334,11 @@ aleste_core core (
     .video_v_off(status[12:10]),
     .tape_sound(status[20]),
     .tape_invert(status[27]),
+`ifdef USE_AUDIO_IN
+    .tape_ext(AUDIO_IN),          // magnetofono por la entrada de audio de la placa
+`else
+    .tape_ext(1'b0),              // la MiST no tiene entrada de audio
+`endif
     .test_tone(status[25]),
     .img_mounted(img_mounted),
     .img_wp(1'b0),

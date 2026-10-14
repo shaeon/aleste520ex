@@ -318,7 +318,7 @@ module tb_fase3;
         .joystick(8'h00), .audio_stereo(1'b0), .audio_l(aud_l), .audio_r(),
         .fdc_fast(fdc_fast), .fdc_one_drive(1'b0), .video_h_off(3'd0), .video_v_off(3'd0),
         .mouse_x(ms_x), .mouse_y(ms_y), .mouse_flags(ms_flags), .mouse_strobe(ms_strobe), .mist_rtc(64'd0), .cpc_mouse_en(1'b1), .amx_mouse_en(1'b0), .cpu_turbo(turbo),
-        .tape_sound(1'b0), .tape_invert(1'b0), .test_tone(1'b0), .img_mounted(img_mounted), .img_wp(1'b0), .img_size(img_size),
+        .tape_sound(1'b0), .tape_invert(1'b0), .tape_ext(1'b0), .test_tone(1'b0), .img_mounted(img_mounted), .img_wp(1'b0), .img_size(img_size),
         .sd_lba(sd_lba), .sd_rd(sd_rd), .sd_wr(sd_wr), .sd_ack(sd_ack), .sd_buff_addr(sd_buff_addr),
         .sd_buff_dout(sd_buff_dout), .sd_buff_din(), .sd_buff_wr(sd_buff_wr),
         .ioctl_download, .ioctl_index, .ioctl_wr, .ioctl_addr, .ioctl_dout,
