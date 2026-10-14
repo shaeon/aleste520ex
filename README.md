@@ -142,7 +142,7 @@ To the **Retro-Wiki FPGA-dev Team**, especially **Ron, Manuel (teiram), Somhi,
 Roderick, Rampa, Kyp and Benito**, for their help and patience. A special
 mention to **Ron**.
 
-To **Jaime Soriano (deepfb)**, possibly the only owner of an Aleste 520EX in
+To **Jaime González (alt)**, possibly the only owner of an Aleste 520EX in
 Spain, for his unconditional help.
 
 ## AI assistance and resources

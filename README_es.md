@@ -147,7 +147,7 @@ Al **Retro-Wiki FPGA-dev Team**, en especial a **Ron, Manuel (teiram), Somhi,
 Roderick, Rampa, Kyp y Benito**, por su ayuda y su paciencia. Una mención
 especial para **Ron**.
 
-A **Jaime Soriano (deepfb)**, posiblemente el único poseedor de un Aleste
+A **Jaime González (alt)**, posiblemente el único poseedor de un Aleste
 520EX en España, por su ayuda incondicional.
 
 ## Asistencia de IA y recursos
