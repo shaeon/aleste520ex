@@ -19,6 +19,13 @@ producir algo a medias. Despues de actualizar el submodulo:
                           mezcla '=' y '<=' en la misma variable: Quartus no lo
                           admite (error 10110) y Verilator tampoco. No se lee
                           dentro del bloque, asi que el comportamiento es igual.
+  rtl/sdram_wishbone.sv   Con la macro SDRAM_DQ_REG (la define MiSTer) el dato de
+                          lectura se recoge en un registro del pin (dq_in) y los
+                          ack0/ack1 de la lectura salen un ciclo despues. El
+                          original pasa SDRAM_DQ directo a wb_dat_o y lo recogen
+                          registros del arbitro y del video lejos del pin: en
+                          MiSTer esa ruta no cumple tiempos (hasta -3,3 ns a
+                          108 MHz). Sin la macro el fichero es igual al original.
   rtl/mc6845mod.sv        (fase 3) Modo CPC: chip select con A14=0 (BCxx-BFxx; el
                           original compara con el bit 14 de 6845h, que es 1, y
                           responderia al Gate Array y a la PPI), direccion de
@@ -575,6 +582,32 @@ def gen_ym2149():
     write("rtl/YM2149.sv", src, "assign de ymreg/dout tras declararlos (Quartus 10161); registro 15 con IOB_in.", text)
 
 
+def gen_sdram_wishbone():
+    src = "components/memory/sdram/sdram_wishbone.sv"
+    text = (UP / src).read_text(encoding="utf-8")
+    # Primero los ciclos posteriores, para no volver a desplazar lo ya desplazado
+    text = replace_once(text, "{READ, T_RCD+CAS+5'd2}: begin",
+                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd3}: begin\n`else\n"
+                        "            {READ, T_RCD+CAS+5'd2}: begin\n`endif", "sdram READ +2")
+    text = replace_once(text, "{READ, T_RCD+CAS+5'd1}: begin",
+                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd2}: begin\n`else\n"
+                        "            {READ, T_RCD+CAS+5'd1}: begin\n`endif", "sdram READ +1")
+    text = replace_once(text, "{READ, T_RCD+CAS}: begin",
+                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd1}: begin\n`else\n"
+                        "            {READ, T_RCD+CAS}: begin\n`endif", "sdram READ")
+    text = replace_once(text, "assign dq_in = SDRAM_DQ_I;   // input data",
+                        "`ifdef SDRAM_DQ_REG\n"
+                        "// Dato de lectura recogido en el registro del pin (FAST_INPUT_REGISTER):\n"
+                        "// el mismo flanco en el que antes lo recogian los maestros; los ack de la\n"
+                        "// lectura van un ciclo despues (tools/gen_rtl.py)\n"
+                        "always @(posedge wb_clk_i) dq_in <= SDRAM_DQ_I;\n"
+                        "`else\n"
+                        "assign dq_in = SDRAM_DQ_I;   // input data\n"
+                        "`endif", "sdram dq_in")
+    write("rtl/sdram_wishbone.sv", src,
+          "con SDRAM_DQ_REG, dato de lectura registrado en el pin y ack de lectura un ciclo despues (MiSTer).", text)
+
+
 if __name__ == "__main__":
     gen_video_ctrl()
     gen_memory_arbiter()
@@ -587,3 +620,4 @@ if __name__ == "__main__":
     gen_ym2149()
     gen_z80_system()
     gen_cpc_colors()
+    gen_sdram_wishbone()

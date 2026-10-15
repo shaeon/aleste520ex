@@ -1,6 +1,6 @@
 +incdir+sim/stubs
 aleste-lx/src/components/reset/reset_controller.sv
-aleste-lx/src/components/memory/sdram/sdram_wishbone.sv
+rtl/sdram_wishbone.sv
 rtl/mc6845mod.sv
 aleste-lx/src/components/video/hdmi_scaler/dual_port_ram.sv
 aleste-lx/src/components/video/hdmi_scaler/hdmi_scaler.sv

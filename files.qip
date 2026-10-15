@@ -7,7 +7,7 @@ set_global_assignment -name QIP_FILE [file join $::quartus(qip_path) common/mist
 
 # Aleste LX, sin tocar (submodulo aleste-lx, rama dev)
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/reset/reset_controller.sv]
-set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/memory/sdram/sdram_wishbone.sv]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/sdram_wishbone.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/mc6845mod.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/hdmi_scaler/dual_port_ram.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) aleste-lx/src/components/video/hdmi_scaler/hdmi_scaler.sv]

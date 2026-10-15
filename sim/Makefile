@@ -3,13 +3,15 @@
 #   make fase2    fase 2: el Z80 ejecuta ../tools/diag/DIAG.ROM (tb_fase2) y vuelca
 #                 la pantalla en obj2/pantalla.ppm (y .png si hay Python+PIL)
 #   make lint     lint del diseno completo
+#   DEFS=-DSDRAM_DQ_REG  con el dato de lectura de la SDRAM registrado (MiSTer);
+#                 usar con make clean o un -Mdir distinto
 ROOT    := ..
 A       := $(ROOT)/aleste-lx/src
 FLAGS   := --binary --timing -j 0 -Wno-fatal -Wno-lint -Wno-style -Wno-TIMESCALEMOD \
            -Wno-MULTIDRIVEN -Wno-UNOPTFLAT -Wno-INITIALDLY \
-           --top-module tb_aleste_core -Mdir obj
+           --top-module tb_aleste_core -Mdir obj $(DEFS)
 SRCS    := $(A)/components/reset/reset_controller.sv \
-           $(A)/components/memory/sdram/sdram_wishbone.sv \
+           $(ROOT)/rtl/sdram_wishbone.sv \
            $(ROOT)/rtl/mc6845mod.sv \
            $(A)/components/video/hdmi_scaler/dual_port_ram.sv \
            $(A)/components/video/hdmi_scaler/hdmi_scaler.sv \
