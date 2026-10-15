@@ -27,6 +27,13 @@
 //
 // Puesta en hora (set_*): la hora del firmware de MiST (si la placa tiene
 // reloj), en BCD; se convierte al modo del reloj.
+//
+// Cambio de DM: cuando la CPU cambia el bit DM del registro B, la hora y la
+// fecha (0, 2, 4, 7, 8, 9) se convierten al formato nuevo, un campo por ciclo
+// (en un solo ciclo no cumpliria los 54 MHz de la SiDi). Un MC146818 real no lo
+// hace, pero el firmware del 520EX pasa el reloj a binario sin volver a
+// escribir la hora: con una CMOS en blanco (DM = 0) la hora puesta por el
+// firmware de MiST/MiSTer, en BCD, se leia como binario (23:52 salia 35:82).
 // ============================================================================
 `default_nettype none
 
@@ -62,6 +69,8 @@ wire        setb  = ram[6'h0B][7];             // SET: hora parada
 logic       uf;                                // registro C, bit 4
 logic       drive_d;
 logic [2:0] step;                              // 0 parado, 1-6 campo que se actualiza
+logic [2:0] conv;                              // 0 parado, 1-6 campo que se convierte (cambio de DM)
+logic       conv_bin;                          // formato de destino: 1 binario, 0 BCD
 
 // ---------------------------------------------------------------- utilidades
 // Todo en el formato del registro (binario o BCD segun DM), sin convertir: en
@@ -89,6 +98,13 @@ endfunction
 function automatic logic [7:0] bcd2b(input logic [7:0] v);                 // x10 = x8 + x2
     bcd2b = {1'b0, v[7:4], 3'b000} + {3'b000, v[7:4], 1'b0} + {4'b0000, v[3:0]};
 endfunction
+function automatic logic [7:0] b2bcd(input logic [7:0] v);                 // 0-99; v/10 = v*205 >> 11
+    logic [15:0] p;
+    logic [3:0]  t;
+    p = {8'd0, v} * 16'd205;
+    t = p[14:11];
+    b2bcd = {t, 4'(v - {t, 3'b000} - {3'b000, t, 1'b0})};                // unidades = v - 10*decenas
+endfunction
 
 // ---------------------------------------------------------------- reloj
 logic [$clog2(CLK_HZ)-1:0] div;
@@ -104,6 +120,7 @@ always_ff @(posedge clk) begin
         dirty <= 1'b0;
         uf <= 1'b0;
         step <= 3'd0;
+        conv <= 3'd0;
     end else begin
         // ---- actualizacion de cada segundo: un campo por ciclo, solo con acarreo
         if (setb) begin div <= '0; step <= 3'd0; end
@@ -150,10 +167,27 @@ always_ff @(posedge clk) begin
             step   <= 3'd0;
         end
 
+        // ---- cambio de DM: hora y fecha al formato nuevo, un campo por ciclo
+        if (conv != 3'd0) begin
+            case (conv)
+                3'd1: ram[0] <= conv_bin ? bcd2b(ram[0]) : b2bcd(ram[0]);
+                3'd2: ram[2] <= conv_bin ? bcd2b(ram[2]) : b2bcd(ram[2]);
+                3'd3: ram[4] <= conv_bin ? bcd2b(ram[4]) : b2bcd(ram[4]);
+                3'd4: ram[7] <= conv_bin ? bcd2b(ram[7]) : b2bcd(ram[7]);
+                3'd5: ram[8] <= conv_bin ? bcd2b(ram[8]) : b2bcd(ram[8]);
+                default: ram[9] <= conv_bin ? bcd2b(ram[9]) : b2bcd(ram[9]);
+            endcase
+            conv <= (conv == 3'd6) ? 3'd0 : conv + 3'd1;
+        end
+
         // ---- acceso de la CPU
         if (sel) begin
             if (cmd == 3'd2) addr <= din[5:0];
             else if (cmd == 3'd4) begin
+                if (addr == 6'h0B && din[2] != ram[6'h0B][2]) begin   // cambia DM
+                    conv     <= 3'd1;
+                    conv_bin <= din[2];
+                end
                 if (addr != 6'h0C && addr != 6'h0D) ram[addr] <= din;
                 if (addr >= 6'h0A) dirty <= 1'b1;           // la hora no hace falta guardarla
             end
