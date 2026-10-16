@@ -16,6 +16,9 @@ module tb_fase2;
 
     logic clk_system = 0, clk_bus = 0, clk_pixel = 0, pll_locked = 0;
     always #4.6296 clk_system = ~clk_system;
+    // Reloj de captura de las lecturas (SDRAM_DQ_CLK): clk_system retrasado 1,5 ns
+    wire clk_dq;
+    assign #1.5 clk_dq = clk_system;
     always @(posedge clk_system) clk_bus <= ~clk_bus;
     logic [1:0] div4 = 0;
     always @(posedge clk_system) begin
@@ -38,6 +41,9 @@ module tb_fase2;
     wire        busy, overflow, timeout, refreshing, cpu_running, cpu_halted;
 
     aleste_core dut (
+`ifdef SDRAM_DQ_CLK
+        .sdram_dq_clk(clk_dq),
+`endif
         .clk_system, .clk_bus, .clk_pixel, .pll_locked,
         .user_reset(1'b0),
         .ioctl_download, .ioctl_index, .ioctl_wr, .ioctl_addr, .ioctl_dout,

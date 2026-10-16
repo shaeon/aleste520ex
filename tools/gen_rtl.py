@@ -26,6 +26,9 @@ producir algo a medias. Despues de actualizar el submodulo:
                           registros del arbitro y del video lejos del pin: en
                           MiSTer esa ruta no cumple tiempos (hasta -3,3 ns a
                           108 MHz). Sin la macro el fichero es igual al original.
+                          Con SDRAM_DQ_CLK ademas, ese registro va con su propio
+                          reloj (puerto SDRAM_DQ_CLK), para ajustar la captura de
+                          las lecturas sin mover las ordenes y escrituras.
   rtl/mc6845mod.sv        (fase 3) Modo CPC: chip select con A14=0 (BCxx-BFxx; el
                           original compara con el bit 14 de 6845h, que es 1, y
                           responderia al Gate Array y a la PPI), direccion de
@@ -600,10 +603,22 @@ def gen_sdram_wishbone():
                         "// Dato de lectura recogido en el registro del pin (FAST_INPUT_REGISTER):\n"
                         "// el mismo flanco en el que antes lo recogian los maestros; los ack de la\n"
                         "// lectura van un ciclo despues (tools/gen_rtl.py)\n"
+                        "`ifdef SDRAM_DQ_CLK\n"
+                        "// SDRAM_DQ_CLK: el registro va con su propio reloj (misma frecuencia que\n"
+                        "// wb_clk_i, algo retrasado), para ajustar la captura de las lecturas sin\n"
+                        "// mover el reloj de la SDRAM, que fija el tiempo de ordenes y escrituras\n"
+                        "always @(posedge SDRAM_DQ_CLK) dq_in <= SDRAM_DQ_I;\n"
+                        "`else\n"
                         "always @(posedge wb_clk_i) dq_in <= SDRAM_DQ_I;\n"
+                        "`endif\n"
                         "`else\n"
                         "assign dq_in = SDRAM_DQ_I;   // input data\n"
                         "`endif", "sdram dq_in")
+    text = replace_once(text, "    input  logic [SDRAM_DATA_WIDTH-1:0] SDRAM_DQ_I,\n",
+                        "    input  logic [SDRAM_DATA_WIDTH-1:0] SDRAM_DQ_I,\n"
+                        "`ifdef SDRAM_DQ_CLK\n"
+                        "    input  logic                        SDRAM_DQ_CLK,   // reloj de captura de SDRAM_DQ_I\n"
+                        "`endif\n", "sdram puerto DQ_CLK")
     write("rtl/sdram_wishbone.sv", src,
           "con SDRAM_DQ_REG, dato de lectura registrado en el pin y ack de lectura un ciclo despues (MiSTer).", text)
 

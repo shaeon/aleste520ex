@@ -30,6 +30,9 @@ module aleste_core #(
     input  logic        clk_bus,        //  54 MHz
     input  logic        clk_pixel,      //  27 MHz
     input  logic        clk_vid,        //  80 MHz (video del modo CPC, PLL propio)
+`ifdef SDRAM_DQ_CLK
+    input  logic        sdram_dq_clk,   // 108 MHz algo retrasado: captura de las lecturas de la SDRAM (MiSTer)
+`endif
     input  logic        pll_locked,
     input  logic        user_reset,     // menu o boton (dominio clk_bus)
     input  logic [1:0]  boot_mode,      // OSD CPC boot: 0 Aleste 520EX, 1 AMSTRAD (SHIFT), 2 Aleste BIOS (BS -> SETUP)
@@ -1175,6 +1178,9 @@ sdram_wishbone #(
     .wb_refresh_i(refresh_go),
 
     .SDRAM_DQ_I(sdram_dq_i),
+`ifdef SDRAM_DQ_CLK
+    .SDRAM_DQ_CLK(sdram_dq_clk),
+`endif
     .SDRAM_DQ_O(sdram_dq_o),
     .SDRAM_DQOEN(sdram_dq_oe),
     .SDRAM_A(sdram_a),

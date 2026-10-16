@@ -60,6 +60,9 @@ module sdram_wishbone #(
 (
     // SDRAM Physical Interface
     input  logic [SDRAM_DATA_WIDTH-1:0] SDRAM_DQ_I,
+`ifdef SDRAM_DQ_CLK
+    input  logic                        SDRAM_DQ_CLK,   // reloj de captura de SDRAM_DQ_I
+`endif
     output logic [SDRAM_DATA_WIDTH-1:0] SDRAM_DQ_O,
     output logic [12:0]                 SDRAM_A,
     output logic [1:0]                  SDRAM_BA,
@@ -345,7 +348,14 @@ end
 // Dato de lectura recogido en el registro del pin (FAST_INPUT_REGISTER):
 // el mismo flanco en el que antes lo recogian los maestros; los ack de la
 // lectura van un ciclo despues (tools/gen_rtl.py)
+`ifdef SDRAM_DQ_CLK
+// SDRAM_DQ_CLK: el registro va con su propio reloj (misma frecuencia que
+// wb_clk_i, algo retrasado), para ajustar la captura de las lecturas sin
+// mover el reloj de la SDRAM, que fija el tiempo de ordenes y escrituras
+always @(posedge SDRAM_DQ_CLK) dq_in <= SDRAM_DQ_I;
+`else
 always @(posedge wb_clk_i) dq_in <= SDRAM_DQ_I;
+`endif
 `else
 assign dq_in = SDRAM_DQ_I;   // input data
 `endif
