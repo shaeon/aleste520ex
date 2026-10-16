@@ -231,14 +231,18 @@ always @(posedge wb_clk_i) begin
                 SDRAM_A[9:0] <= {1'b0, addr[COL_WIDTH-1 : 0]}; // 9-бит column address
                 SDRAM_DQM <= 2'b00;  // Все байты активны для чтения
             end
-            `ifdef SDRAM_DQ_REG
+            `ifdef SDRAM_DQ_CLK
+            {READ, T_RCD+CAS+5'd2}: begin
+`elsif SDRAM_DQ_REG
             {READ, T_RCD+CAS+5'd1}: begin
 `else
             {READ, T_RCD+CAS}: begin
 `endif
                 wb_ack0 <= 1'b1;
             end
-            `ifdef SDRAM_DQ_REG
+            `ifdef SDRAM_DQ_CLK
+            {READ, T_RCD+CAS+5'd3}: begin
+`elsif SDRAM_DQ_REG
             {READ, T_RCD+CAS+5'd2}: begin
 `else
             {READ, T_RCD+CAS+5'd1}: begin
@@ -254,7 +258,9 @@ always @(posedge wb_clk_i) begin
                     state <= IDLE;
                 end
             end
-            `ifdef SDRAM_DQ_REG
+            `ifdef SDRAM_DQ_CLK
+            {READ, T_RCD+CAS+5'd4}: begin
+`elsif SDRAM_DQ_REG
             {READ, T_RCD+CAS+5'd3}: begin
 `else
             {READ, T_RCD+CAS+5'd2}: begin
@@ -353,6 +359,11 @@ end
 // wb_clk_i, algo retrasado), para ajustar la captura de las lecturas sin
 // mover el reloj de la SDRAM, que fija el tiempo de ordenes y escrituras
 always @(posedge SDRAM_DQ_CLK) dq_in <= SDRAM_DQ_I;
+// ... y un registro mas en wb_clk_i antes de repartirlo al arbitro y al
+// video (lejos del pin): con el retraso de SDRAM_DQ_CLK no quedaba ciclo
+// entero para esa ruta. Los ack van dos ciclos despues del original.
+logic [SDRAM_DATA_WIDTH-1:0] dq_in_s;
+always @(posedge wb_clk_i) dq_in_s <= dq_in;
 `else
 always @(posedge wb_clk_i) dq_in <= SDRAM_DQ_I;
 `endif
@@ -363,7 +374,11 @@ assign SDRAM_DQ_O = dq_out;  // output data
 assign SDRAM_DQOEN = dq_oen; // out direction   
 assign SDRAM_CKE = 1'b1;
 assign SDRAM_nCS = 1'b0;
+`ifdef SDRAM_DQ_CLK
+assign wb_dat_o = dq_in_s;
+`else
 assign wb_dat_o = dq_in;
+`endif
 assign wb_busy_o = busy;
 assign wb_ack0_o = wb_ack0;
 assign wb_ack1_o = wb_ack1;

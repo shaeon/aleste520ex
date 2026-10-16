@@ -28,7 +28,9 @@ producir algo a medias. Despues de actualizar el submodulo:
                           108 MHz). Sin la macro el fichero es igual al original.
                           Con SDRAM_DQ_CLK ademas, ese registro va con su propio
                           reloj (puerto SDRAM_DQ_CLK), para ajustar la captura de
-                          las lecturas sin mover las ordenes y escrituras.
+                          las lecturas sin mover las ordenes y escrituras, y hay
+                          un registro mas en wb_clk_i antes de repartir el dato
+                          (los ack van dos ciclos despues del original).
   rtl/mc6845mod.sv        (fase 3) Modo CPC: chip select con A14=0 (BCxx-BFxx; el
                           original compara con el bit 14 de 6845h, que es 1, y
                           responderia al Gate Array y a la PPI), direccion de
@@ -590,13 +592,16 @@ def gen_sdram_wishbone():
     text = (UP / src).read_text(encoding="utf-8")
     # Primero los ciclos posteriores, para no volver a desplazar lo ya desplazado
     text = replace_once(text, "{READ, T_RCD+CAS+5'd2}: begin",
-                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd3}: begin\n`else\n"
+                        "`ifdef SDRAM_DQ_CLK\n            {READ, T_RCD+CAS+5'd4}: begin\n"
+                        "`elsif SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd3}: begin\n`else\n"
                         "            {READ, T_RCD+CAS+5'd2}: begin\n`endif", "sdram READ +2")
     text = replace_once(text, "{READ, T_RCD+CAS+5'd1}: begin",
-                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd2}: begin\n`else\n"
+                        "`ifdef SDRAM_DQ_CLK\n            {READ, T_RCD+CAS+5'd3}: begin\n"
+                        "`elsif SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd2}: begin\n`else\n"
                         "            {READ, T_RCD+CAS+5'd1}: begin\n`endif", "sdram READ +1")
     text = replace_once(text, "{READ, T_RCD+CAS}: begin",
-                        "`ifdef SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd1}: begin\n`else\n"
+                        "`ifdef SDRAM_DQ_CLK\n            {READ, T_RCD+CAS+5'd2}: begin\n"
+                        "`elsif SDRAM_DQ_REG\n            {READ, T_RCD+CAS+5'd1}: begin\n`else\n"
                         "            {READ, T_RCD+CAS}: begin\n`endif", "sdram READ")
     text = replace_once(text, "assign dq_in = SDRAM_DQ_I;   // input data",
                         "`ifdef SDRAM_DQ_REG\n"
@@ -608,6 +613,11 @@ def gen_sdram_wishbone():
                         "// wb_clk_i, algo retrasado), para ajustar la captura de las lecturas sin\n"
                         "// mover el reloj de la SDRAM, que fija el tiempo de ordenes y escrituras\n"
                         "always @(posedge SDRAM_DQ_CLK) dq_in <= SDRAM_DQ_I;\n"
+                        "// ... y un registro mas en wb_clk_i antes de repartirlo al arbitro y al\n"
+                        "// video (lejos del pin): con el retraso de SDRAM_DQ_CLK no quedaba ciclo\n"
+                        "// entero para esa ruta. Los ack van dos ciclos despues del original.\n"
+                        "logic [SDRAM_DATA_WIDTH-1:0] dq_in_s;\n"
+                        "always @(posedge wb_clk_i) dq_in_s <= dq_in;\n"
                         "`else\n"
                         "always @(posedge wb_clk_i) dq_in <= SDRAM_DQ_I;\n"
                         "`endif\n"
@@ -619,6 +629,8 @@ def gen_sdram_wishbone():
                         "`ifdef SDRAM_DQ_CLK\n"
                         "    input  logic                        SDRAM_DQ_CLK,   // reloj de captura de SDRAM_DQ_I\n"
                         "`endif\n", "sdram puerto DQ_CLK")
+    text = replace_once(text, "assign wb_dat_o = dq_in;\n",
+                        "`ifdef SDRAM_DQ_CLK\nassign wb_dat_o = dq_in_s;\n`else\nassign wb_dat_o = dq_in;\n`endif\n", "sdram wb_dat_o")
     write("rtl/sdram_wishbone.sv", src,
           "con SDRAM_DQ_REG, dato de lectura registrado en el pin y ack de lectura un ciclo despues (MiSTer).", text)
 
