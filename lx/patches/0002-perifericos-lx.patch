@@ -1,0 +1,124 @@
+--- a/main.c
++++ b/main.c
+@@ -4,6 +4,79 @@
+ #include "drivers/vbuf.h"
+ #include "drivers/palette.h"
+ 
++/* ---- Perifericos del modo LX del core (doc/10-modo-lx.md del core) ----
++   Puerto F1h = pagina MMIO; los parametros de 8 bits van de uno en uno en la pila */
++static void io_wr(uint8_t page, uint8_t reg, uint8_t v) __naked {
++    page; reg; v;
++    __asm
++        ld hl, #2
++        add hl, sp
++        ld a, (hl)      ; pagina
++        out (0xF1), a
++        inc hl
++        ld c, (hl)      ; registro
++        inc hl
++        ld a, (hl)      ; valor
++        out (c), a
++        ret
++    __endasm;
++}
++static uint8_t io_rd(uint8_t page, uint8_t reg) __naked {
++    page; reg;
++    __asm
++        ld hl, #2
++        add hl, sp
++        ld a, (hl)
++        out (0xF1), a
++        inc hl
++        ld c, (hl)
++        in l, (c)
++        ret
++    __endasm;
++}
++
++/* Escribe un valor en un registro de lectura/escritura y comprueba que se lee igual */
++static uint8_t probe(uint8_t page, uint8_t reg, uint8_t v) {
++    uint8_t old = io_rd(page, reg), ok;
++    io_wr(page, reg, v);
++    ok = (io_rd(page, reg) == v);
++    io_wr(page, reg, old);
++    return ok;
++}
++
++static void print_at(const char* s, uint16_t x, uint16_t y) {
++    for (; *s; s++, x += 8)
++        vbuf_draw_char(&_scr_font_data, *s, x, y);
++}
++
++static uint16_t ms_now(void) {
++    uint8_t lo = io_rd(0, 0x45);                /* leer el bajo congela el alto */
++    return ((uint16_t)io_rd(0, 0x46) << 8) | lo;
++}
++
++/* Pitido corto por la Magic Sound 2: onda cuadrada de 16 muestras (3 kHz) */
++static const signed char beep_wave[16] = { 90,90,90,90,90,90,90,90, -90,-90,-90,-90,-90,-90,-90,-90 };
++static void ms2_beep(uint16_t ms) {
++    /* La CPU ve su imagen en C00000-C0FFFF; fisicamente esta en 410000 */
++    uint16_t a = (uint16_t)beep_wave, e = a + sizeof(beep_wave), t0;
++    io_wr(7, 0x00, 1);                          /* MS2 en marcha */
++    io_wr(7, 0x21, a & 0xFF); io_wr(7, 0x22, a >> 8); io_wr(7, 0x23, 0x41);   /* START */
++    io_wr(7, 0x24, e & 0xFF); io_wr(7, 0x25, e >> 8); io_wr(7, 0x26, 0x41);   /* END */
++    io_wr(7, 0x27, a & 0xFF); io_wr(7, 0x28, a >> 8); io_wr(7, 0x29, 0x41);   /* LOOP */
++    io_wr(7, 0x2A, 0x60); io_wr(7, 0x2B, 0x60);                              /* volumen */
++    io_wr(7, 0x2C, 0); io_wr(7, 0x2D, 0); io_wr(7, 0x2E, 1);                  /* paso 1.0 */
++    io_wr(7, 0x20, 0x03);                       /* suena, en bucle */
++    t0 = ms_now();
++    while ((uint16_t)(ms_now() - t0) < ms) ;
++    io_wr(7, 0x20, 0x00);
++}
++
++static void utoa5(uint16_t v, char* out) {
++    int8_t i;
++    for (i = 4; i >= 0; i--) { out[i] = '0' + (v % 10); v /= 10; }
++    out[5] = 0;
++}
++
+ void main(void) {
+     mmu_install();
+     crtc_install();
+@@ -22,11 +95,35 @@
+         for (p = msg; *p; p++, x += 8)
+             vbuf_draw_char(&_scr_font_data, *p, x, 8);
+     }
+-    while(1) {
+-        // Главный цикл супервизора
+-        __asm
+-            halt
+-        __endasm;
++    {
++        /* Comprobacion de los perifericos del modo LX */
++        uint8_t pic = probe(0, 0x02, 0x5A);    /* PIC: vector */
++        uint8_t tmr = probe(0, 0x41, 0xA5);    /* temporizador: periodo */
++        uint8_t ms2 = probe(7, 0x01, 0x3C);    /* MS2: volumen global */
++        uint8_t dma = probe(6, 0x10, 0xC3);    /* DMA: KEY */
++        print_at(pic ? "PIC    OK" : "PIC    --", 8, 32);
++        print_at(tmr ? "TIMER  OK" : "TIMER  --", 8, 40);
++        print_at(ms2 ? "MS2    OK" : "MS2    --", 8, 48);
++        print_at(dma ? "DMA    OK" : "DMA    --", 8, 56);
++        if (ms2 && tmr) ms2_beep(150);
++    }
++    {
++        /* Tiempo desde el arranque, con el contador de milisegundos */
++        uint16_t last = ms_now(), secs = 0, acc = 0;
++        char buf[6];
++        print_at("UPTIME       s", 8, 80);
++        utoa5(0, buf);
++        print_at(buf, 8 + 7 * 8, 80);
++        while (1) {
++            uint16_t now = ms_now();
++            acc += (uint16_t)(now - last);
++            last = now;
++            if (acc >= 1000) {
++                acc -= 1000;
++                secs++;
++                utoa5(secs, buf);
++                print_at(buf, 8 + 7 * 8, 80);
++            }
++        }
+     }
+ }
+-

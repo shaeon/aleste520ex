@@ -24,13 +24,19 @@ las cuatro paginas del Z80 en C00000. Hace
 y la CPU sigue en 0000h ya con la ROM baja del CPC (pagina 0 de AL512), como
 tras un reset de un 520EX.
 
-Uso:  python3 tools/make_rom.py RUTA/AL512.BIN [-o ALESTE.ROM]
+Con --lx se anade detras la BIOS del Aleste LX (64 KB, lx/build.sh o
+sd/LX.ROM): el cargador la deja en 410000 y el modo LX (OSD CPC boot =
+Aleste LX, macro ALESTE_LX) la arranca en lugar del 520EX.
+
+Uso:  python3 tools/make_rom.py RUTA/AL512.BIN [-o ALESTE.ROM] [--lx sd/LX.ROM]
       python3 tools/make_rom.py --boot-only -o BOOT520.BIN
 
 Con --boot-only solo se genera el arranque (16 KB, sin nada de AL512 salvo
 LD BC,7F89h). Asi el ALESTE.ROM se puede montar sin Python:
       copy /b BOOT520.BIN + AL512.BIN ALESTE.ROM      (Windows)
       cat BOOT520.BIN AL512.BIN > ALESTE.ROM          (Linux/macOS)
+y con el modo LX:
+      copy /b BOOT520.BIN + AL512.BIN + LX.ROM ALESTE.ROM
 """
 import argparse, pathlib, sys, zlib
 
@@ -41,6 +47,7 @@ def main():
     ap.add_argument("al512", nargs="?", help="AL512.BIN (64 KB)")
     ap.add_argument("--boot-only", action="store_true", help="solo el arranque de 16 KB")
     ap.add_argument("-o", "--output", default="ALESTE.ROM")
+    ap.add_argument("--lx", help="LX.ROM (64 KB): BIOS del Aleste LX para el modo LX")
     args = ap.parse_args()
 
     if args.boot_only:
@@ -64,8 +71,15 @@ def main():
     boot[0x3FFE:0x4000] = bytes([0xD3, 0xF0])  # OUT (0F0h),A  -> modo CPC
 
     out = bytes(boot) if args.boot_only else bytes(boot) + rom
+    if args.lx:
+        if args.boot_only:
+            ap.error("--lx va con AL512.BIN, no con --boot-only")
+        lx = pathlib.Path(args.lx).read_bytes()
+        if len(lx) != 65536:
+            sys.exit(f"{args.lx}: {len(lx)} bytes, se esperaban 65536")
+        out += lx
     pathlib.Path(args.output).write_bytes(out)
-    print(f"{args.output}: {len(out)} bytes" + (" (arranque)" if args.boot_only else " (arranque 16 KB + AL512 64 KB)"))
+    print(f"{args.output}: {len(out)} bytes" + (" (arranque)" if args.boot_only else " (arranque 16 KB + AL512 64 KB" + (" + BIOS LX 64 KB)" if args.lx else ")")))
 
 if __name__ == "__main__":
     main()
