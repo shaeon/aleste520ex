@@ -35,7 +35,7 @@ SRCS    := $(A)/components/reset/reset_controller.sv \
            $(A)/components/interconnect/wishbone/wb_wdt_simple.sv \
            $(ROOT)/rtl/tv80lx.v $(ROOT)/rtl/mmu_native.sv \
            $(ROOT)/rtl/vga_timing.sv $(ROOT)/rtl/video_ctrl_vga.sv \
-           $(ROOT)/rtl/mist_loader.sv $(ROOT)/rtl/cpc/UM6845R.v $(ROOT)/rtl/cpc/cpc_video.sv $(ROOT)/rtl/cpc/kbd_520ex.sv $(ROOT)/rtl/cpc/rtc146818.sv $(ROOT)/rtl/cpc/magic_sound.sv $(ROOT)/rtl/cpc/serial_mouse.sv $(ROOT)/rtl/cpc/kempston_mouse.v $(ROOT)/rtl/cpc/symbiface_mouse.v $(ROOT)/rtl/cpc/multiplay_mouse.v $(ROOT)/rtl/cpc/amx_mouse.v $(ROOT)/rtl/cpc/tzxplayer.sv $(ROOT)/rtl/cpc/u765.sv $(ROOT)/rtl/YM2149.sv $(ROOT)/rtl/lx/lx_sys.sv $(ROOT)/rtl/lx/lx_ms2.sv $(ROOT)/rtl/lx/lx_dma.sv $(ROOT)/rtl/aleste_core.sv \
+           $(ROOT)/rtl/mist_loader.sv $(ROOT)/rtl/cpc/UM6845R.v $(ROOT)/rtl/cpc/cpc_video.sv $(ROOT)/rtl/cpc/kbd_520ex.sv $(ROOT)/rtl/cpc/rtc146818.sv $(ROOT)/rtl/cpc/magic_sound.sv $(ROOT)/rtl/cpc/serial_mouse.sv $(ROOT)/rtl/cpc/kempston_mouse.v $(ROOT)/rtl/cpc/symbiface_mouse.v $(ROOT)/rtl/cpc/multiplay_mouse.v $(ROOT)/rtl/cpc/amx_mouse.v $(ROOT)/rtl/cpc/tzxplayer.sv $(ROOT)/rtl/cpc/u765.sv $(ROOT)/rtl/YM2149.sv $(ROOT)/rtl/aleste_core.sv \
            sdram_model.sv
 
 all: run
@@ -83,7 +83,7 @@ fase3: obj3/Vtb_fase3
 clean:
 	rm -rf obj obj2 obj3 obj3c obj3f obj4
 
-.PHONY: all run wave clean lint fase2 fase3 lx
+.PHONY: all run wave clean lint fase2 fase3 fase2
 
 # Lint del diseno completo (top incluido), desde la raiz del repositorio.
 # Verilator no admite los tri-estado de user_io.v y data_io.v (SPI_DO): esos
@@ -108,16 +108,3 @@ u765: obj4/Vtb_u765
 # Copia aparte del banco de la fase 3 (para no tocar el binario de una simulacion en marcha)
 obj3t/Vtb_fase3: $(SRCS) tb_fase3.sv
 	verilator $(subst -Mdir obj3,-Mdir obj3t,$(FLAGS3)) $(SRCS) tb_fase3.sv
-
-# Modo Aleste LX: la BIOS LX (../sd/LX.ROM, o la de ../lx/build.sh) en modo
-# nativo. El ALESTE.ROM de prueba es el arranque del 520EX + 64 KB vacios en
-# lugar de AL512 + la BIOS LX; el banco de pruebas pone CPC boot = Aleste LX.
-#   make lx [LXROM=/ruta/LX.ROM] [PLUSARGS="+trace_io +ms=120 +vram=C40000"]
-FLAGSLX := $(subst --top-module tb_aleste_core -Mdir obj,--top-module tb_lx -Mdir objlx,$(FLAGS)) -DALESTE_LX
-objlx/Vtb_lx: $(SRCS) tb_lx.sv
-	verilator $(FLAGSLX) $(SRCS) tb_lx.sv
-
-lx: objlx/Vtb_lx
-	python3 -c "import sys; open('objlx/ALESTE_LX.ROM','wb').write(open('../sd/BOOT520.BIN','rb').read() + bytes(65536) + open(sys.argv[1],'rb').read())" $(abspath $(or $(LXROM),../sd/LX.ROM))
-	cp -f $(A)/components/video/palette/*.mem $(ROOT)/rtl/*.mem objlx/ 2>/dev/null; cd objlx && ./Vtb_lx +rom=ALESTE_LX.ROM $(PLUSARGS)
-	-python3 -c "from PIL import Image; Image.open('objlx/pantalla.ppm').save('objlx/pantalla.png')" 2>/dev/null

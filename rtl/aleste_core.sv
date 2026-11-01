@@ -35,7 +35,7 @@ module aleste_core #(
 `endif
     input  logic        pll_locked,
     input  logic        user_reset,     // menu o boton (dominio clk_bus)
-    input  logic [1:0]  boot_mode,      // OSD CPC boot: 0 Aleste 520EX, 1 AMSTRAD (SHIFT), 2 Aleste BIOS (BS -> SETUP), 3 Aleste LX (macro ALESTE_LX)
+    input  logic [1:0]  boot_mode,      // OSD CPC boot: 0 Aleste 520EX, 1 AMSTRAD (SHIFT), 2 Aleste BIOS (BS -> SETUP)
     input  logic        key_strobe,     // teclado PS/2 de user_io (clk_bus)
     input  logic        key_pressed,
     input  logic        key_extended,
@@ -195,8 +195,6 @@ logic [23:0] z80_adr;
 logic [7:0]  z80_dat_out, z80_dat_in;
 logic        cfg_native;
 logic        cpc_int, int_ack;
-logic        lx_int;                    // INT del PIC del modo LX
-logic        lx_mode;                   // modo Aleste LX (ver mas abajo)
 logic [1:0]  cpc_mode;
 logic        z80_halt;
 
@@ -224,7 +222,7 @@ z80_system z80_sys (
     .dbg_ack_o(),
 
     .nmi_req_i(ms_nmi),                 // MagicSound: fin de bloque de DMA
-    .int_req_i(lx_mode ? lx_int : cpc_int),   // modo LX: INT del PIC del Aleste LX (rtl/lx/lx_sys.sv)
+    .int_req_i(cpc_int),
     .mapmod_i(extport[2]),
     .cpu_4mhz_i(~cfg_native),     // modo CPC: Z80 a 4 MHz, como el 520EX
     .cpu_turbo_i(cpu_turbo),      // OSD: 4 / 8 (turbo del 520EX) / 16 MHz
@@ -258,26 +256,20 @@ logic [7:0]  ld_dat_out;
 logic        ms_dma_cyc;
 logic [23:0] ms_dma_adr;
 logic signed [15:0] ms_out_l, ms_out_r;
-logic signed [15:0] ms2_out_l, ms2_out_r;    // Magic Sound 2 (modo LX)
-logic [2:0]  m2_owner;                  // 0 cargador, 1 MagicSound, 2 cinta, 3 Magic Sound 2, 4 DMA (modo LX)
-logic        dma_cyc, dma_we;           // DMA / blitter del modo LX (rtl/lx/lx_dma.sv)
-logic [23:0] dma_adr;
-logic [7:0]  dma_wdat;
-logic        ms2_cyc;                   // DMA de la Magic Sound 2 (rtl/lx/lx_ms2.sv)
-logic [23:0] ms2_adr;
+logic [1:0]  m2_owner;                  // 0 cargador, 1 MagicSound, 2 cinta
 logic        m2_ack, m2_err;
 logic [7:0]  m2_dat;
 logic        tape_cyc;                  // lector de la cinta (ver mas abajo)
 logic [23:0] tape_adr;
 wire ld_req = ld_cyc & ld_stb;
-wire m2_busy = (m2_owner == 3'd0) ? ld_req : (m2_owner == 3'd1) ? ms_dma_cyc : (m2_owner == 3'd2) ? tape_cyc : (m2_owner == 3'd3) ? ms2_cyc : dma_cyc;
+wire m2_busy = (m2_owner == 2'd0) ? ld_req : (m2_owner == 2'd1) ? ms_dma_cyc : tape_cyc;
 always_ff @(posedge clk_bus) begin
-    if (system_reset) m2_owner <= 3'd0;
-    else if (!m2_busy) m2_owner <= ld_req ? 3'd0 : ms_dma_cyc ? 3'd1 : tape_cyc ? 3'd2 : ms2_cyc ? 3'd3 : dma_cyc ? 3'd4 : 3'd0;
+    if (system_reset) m2_owner <= 2'd0;
+    else if (!m2_busy) m2_owner <= ld_req ? 2'd0 : ms_dma_cyc ? 2'd1 : tape_cyc ? 2'd2 : 2'd0;
 end
 wire m2_cyc = m2_busy;
-assign ld_ack = m2_ack & (m2_owner == 3'd0);
-assign ld_err = m2_err & (m2_owner == 3'd0);
+assign ld_ack = m2_ack & (m2_owner == 2'd0);
+assign ld_err = m2_err & (m2_owner == 2'd0);
 
 mist_loader loader (
     .clk(clk_bus),
@@ -309,22 +301,6 @@ logic        vid_cyc, vid_stb, vid_we, vid_ack, vid_grant;
 logic [23:0] vid_adr;
 logic [7:0]  vid_dat_to_slave, vid_dat_from_slave;
 
-// ============================================================================
-// Modo Aleste LX (macro ALESTE_LX, OSD CPC boot = 3): la CPU arranca la BIOS
-// del Aleste LX (aleste-xi-bios) en modo nativo en vez del arranque del 520EX.
-// La imagen LX (64 KB) va en ALESTE.ROM detras de AL512.BIN, asi que el
-// cargador la deja en 410000-41FFFF. En modo LX las 64 KB de la CPU en
-// C00000-C0FFFF (slot 3, bancos 0-3, donde la BIOS LX espera estar) se
-// llevan alli. El arranque del 520EX en C00000 no se toca, y el modo se
-// recoge con el reset de la CPU.
-// ============================================================================
-`ifdef ALESTE_LX
-always_ff @(posedge clk_bus) if (cpu_reset) lx_mode <= (boot_mode == 2'd3);
-`else
-assign lx_mode = 1'b0;
-`endif
-wire [23:0] z80_bus_adr = (lx_mode && z80_adr[23:16] == 8'hC0) ? {8'h41, z80_adr[15:0]} : z80_adr;
-
 system_arbiter sys_arbiter (
     .clk_i(clk_bus),
     .rst_i(system_reset),
@@ -340,7 +316,7 @@ system_arbiter sys_arbiter (
     .z80_cyc_i(z80_cyc),
     .z80_stb_i(z80_stb),
     .z80_we_i(z80_we),
-    .z80_adr_i(z80_bus_adr),
+    .z80_adr_i(z80_adr),
     .z80_dat_i(z80_dat_out),
     .z80_dat_o(z80_dat_in),
     .z80_ack_o(z80_ack),
@@ -349,9 +325,9 @@ system_arbiter sys_arbiter (
 
     .uart_cyc_i(m2_cyc),
     .uart_stb_i(m2_cyc),
-    .uart_we_i((m2_owner == 3'd0) ? ld_we : (m2_owner == 3'd4) ? dma_we : 1'b0),
-    .uart_adr_i((m2_owner == 3'd0) ? ld_adr : (m2_owner == 3'd1) ? ms_dma_adr : (m2_owner == 3'd2) ? tape_adr : (m2_owner == 3'd3) ? ms2_adr : dma_adr),
-    .uart_dat_i((m2_owner == 3'd4) ? dma_wdat : ld_dat_out),
+    .uart_we_i((m2_owner == 2'd0) ? ld_we : 1'b0),
+    .uart_adr_i((m2_owner == 2'd0) ? ld_adr : (m2_owner == 2'd1) ? ms_dma_adr : tape_adr),
+    .uart_dat_i(ld_dat_out),
     .uart_dat_o(m2_dat),
     .uart_ack_o(m2_ack),
     .uart_grant_o(),
@@ -628,8 +604,8 @@ localparam logic signed [15:0] TAPE_LEVEL = 16'sd4096;
 wire signed [15:0] tape_audio = test_tone                   ? (tone      ? TAPE_LEVEL : -TAPE_LEVEL)
                               : (tape_sound && (tape_running || tape_motor)) ? (tape_src ? TAPE_LEVEL : -TAPE_LEVEL)
                               : 16'sd0;
-assign audio_l = 16'($signed({1'b0, mix_l, 4'b0}) + ms_l + tape_audio + (ms2_out_l >>> 1));
-assign audio_r = 16'($signed({1'b0, mix_r, 4'b0}) + ms_r + tape_audio + (ms2_out_r >>> 1));
+assign audio_l = 16'($signed({1'b0, mix_l, 4'b0}) + ms_l + tape_audio);
+assign audio_r = 16'($signed({1'b0, mix_r, 4'b0}) + ms_r + tape_audio);
 
 // ---- EXTEND PORT del 520EX (FABC-FABF, solo escritura). Reparto segun el
 // fuente del BOOTMENU y CPCWiki:
@@ -760,8 +736,8 @@ magic_sound ms (
     .dma_cyc(ms_dma_cyc),
     .dma_adr(ms_dma_adr),
     .dma_dat(m2_dat),
-    .dma_ack(m2_ack & (m2_owner == 3'd1)),
-    .dma_err(m2_err & (m2_owner == 3'd1)),
+    .dma_ack(m2_ack & (m2_owner == 2'd1)),
+    .dma_err(m2_err & (m2_owner == 2'd1)),
     .nmi(ms_nmi),
     .out_l(ms_out_l),
     .out_r(ms_out_r)
@@ -848,7 +824,7 @@ always_ff @(posedge clk_bus) begin
         tape_pos <= '0; tape_cyc <= 1'b0; tape_end <= 1'b0; tape_restart <= 1'b1;
         if (tape_download && ioctl_addr == 27'd0) tape_last <= '0;
     end else if (tape_cyc) begin
-        if (m2_ack && m2_owner == 3'd2) begin      // byte leido de la SDRAM
+        if (m2_ack && m2_owner == 2'd2) begin      // byte leido de la SDRAM
             tape_byte <= m2_dat;
             tape_cyc  <= 1'b0;
             tape_ack  <= tape_req;
@@ -997,93 +973,6 @@ u765 #(.CYCLES(FDC_CYCLES)) fdc (
     .sd_buff_wr(sd_buff_wr)
 );
 
-// ---- Modo LX: dispositivos de sistema en la pagina MMIO 0 (FF0000-FF007F):
-// PIC y temporizador (rtl/lx/lx_sys.sv). Solo en modo LX y con la MMU nativa.
-logic [7:0] lx_dat, ms2_dat, dma_dat;
-logic       lx_ack, ms2_ack, ms2_irq, dma_ack, dma_irq;
-`ifdef ALESTE_LX
-wire lx_cs = lx_mode & ~legacy & (sys_adr[23:7] == 17'h1FE00);
-logic [1:0] lx_vbl_s;                         // VBlank del video nativo (clk_pixel) -> clk_bus
-always_ff @(posedge clk_bus) lx_vbl_s <= {lx_vbl_s[0], vga_vblank};
-lx_sys lx_system (
-    .clk(clk_bus),
-    .rst(cpu_reset),
-    .cs_i(bus_req & lx_cs),
-    .we_i(sys_we),
-    .adr_i(sys_adr[6:0]),
-    .dat_i(sys_dat),
-    .dat_o(lx_dat),
-    .ack_o(lx_ack),
-    //       15..7        6 (timer)  5 IPC  4 LEGACY  3 AUDIO  2 GPU        1 DMA  0 STORAGE
-    .irq_i({9'd0,        1'b0,      1'b0,  cpc_int,  ms2_irq, lx_vbl_s[1], dma_irq, fdc_int}),
-    .int_o(lx_int),
-    .int_vec_o()
-);
-
-// Magic Sound 2 en la pagina MMIO 7 (FF0380-FF03FF)
-wire ms2_cs = lx_mode & ~legacy & (sys_adr[23:7] == 17'h1FE07);
-lx_ms2 lx_sound2 (
-    .clk(clk_bus),
-    .rst(cpu_reset),
-    .cs_i(bus_req & ms2_cs),
-    .we_i(sys_we),
-    .adr_i(sys_adr[6:0]),
-    .dat_i(sys_dat),
-    .dat_o(ms2_dat),
-    .ack_o(ms2_ack),
-    .dma_cyc_o(ms2_cyc),
-    .dma_adr_o(ms2_adr),
-    .dma_dat_i(m2_dat),
-    .dma_ack_i(m2_ack & (m2_owner == 3'd3)),
-    .dma_err_i(m2_err & (m2_owner == 3'd3)),
-    .out_l(ms2_out_l),
-    .out_r(ms2_out_r),
-    .irq_o(ms2_irq)
-);
-
-// DMA / blitter en la pagina MMIO 6 (FF0300-FF037F)
-wire dma_cs = lx_mode & ~legacy & (sys_adr[23:7] == 17'h1FE06);
-lx_dma lx_sysdma (
-    .clk(clk_bus),
-    .rst(cpu_reset),
-    .cs_i(bus_req & dma_cs),
-    .we_i(sys_we),
-    .adr_i(sys_adr[6:0]),
-    .dat_i(sys_dat),
-    .dat_o(dma_dat),
-    .ack_o(dma_ack),
-    .dma_cyc_o(dma_cyc),
-    .dma_we_o(dma_we),
-    .dma_adr_o(dma_adr),
-    .dma_dat_o(dma_wdat),
-    .dma_dat_i(m2_dat),
-    .dma_ack_i(m2_ack & (m2_owner == 3'd4)),
-    .dma_err_i(m2_err & (m2_owner == 3'd4)),
-    .irq_o(dma_irq)
-);
-`else
-wire lx_cs = 1'b0;
-wire dma_cs = 1'b0;
-assign dma_dat = 8'hFF;
-assign dma_ack = 1'b0;
-assign dma_cyc = 1'b0;
-assign dma_we = 1'b0;
-assign dma_adr = '0;
-assign dma_wdat = '0;
-assign dma_irq = 1'b0;
-wire ms2_cs = 1'b0;
-assign ms2_dat = 8'hFF;
-assign ms2_ack = 1'b0;
-assign ms2_cyc = 1'b0;
-assign ms2_adr = '0;
-assign ms2_out_l = '0;
-assign ms2_out_r = '0;
-assign ms2_irq = 1'b0;
-assign lx_dat = 8'hFF;
-assign lx_ack = 1'b0;
-assign lx_int = 1'b0;
-`endif
-
 // ---- Resto de la E/S CPC sin dispositivo (disquetera, impresora...) y el
 // ciclo de reconocimiento de interrupcion (M1+IORQ, que la MMU legacy saca
 // como E/S a FF0000+PC): respuesta inmediata con FF para no esperar al
@@ -1092,9 +981,9 @@ wire leg_none = legacy & (sys_adr[23:16] == 8'hFF) & ~ga_cfg & ~ppi_cs & ~vc_gra
 logic none_ack;
 always_ff @(posedge clk_bus) none_ack <= bus_req & leg_none & ~none_ack;
 
-assign vid_ack            = vc_ack | ga_ack | ppi_ack | none_ack | cv_ack | fdc_ack | mot_ack | ext_ack | usart_ack | ga_rd_ack | ms_ack | cm_ack | lx_ack | ms2_ack | dma_ack;
-assign vid_grant          = vc_grant | (bus_req & (ga_cfg | ppi_cs | leg_none | crtc_cs | ga_pen | fdc_cs | mot_cs | ext_cs | usart_cs | ga_rd | ms_cs | cpcm_cs | lx_cs | ms2_cs | dma_cs));
-assign vid_dat_from_slave = ppi_cs ? ppi_dat : crtc_cs ? cv_dat : fdc_cs ? fdc_dat : usart_cs ? usart_dat : ga_rd ? ga_rd_dat : ms_cs ? ms_dat : cpcm_cs ? cpcm_dat : lx_cs ? lx_dat : ms2_cs ? ms2_dat : dma_cs ? dma_dat : leg_none ? 8'hFF : vc_dat;
+assign vid_ack            = vc_ack | ga_ack | ppi_ack | none_ack | cv_ack | fdc_ack | mot_ack | ext_ack | usart_ack | ga_rd_ack | ms_ack | cm_ack;
+assign vid_grant          = vc_grant | (bus_req & (ga_cfg | ppi_cs | leg_none | crtc_cs | ga_pen | fdc_cs | mot_cs | ext_cs | usart_cs | ga_rd | ms_cs | cpcm_cs));
+assign vid_dat_from_slave = ppi_cs ? ppi_dat : crtc_cs ? cv_dat : fdc_cs ? fdc_dat : usart_cs ? usart_dat : ga_rd ? ga_rd_dat : ms_cs ? ms_dat : cpcm_cs ? cpcm_dat : leg_none ? 8'hFF : vc_dat;
 
 // ---- Interrupciones del Gate Array: una cada 52 HSYNC; 2 HSYNC despues
 // del inicio del VSYNC el contador vuelve a 0 (y si iba por 32 o mas, hay

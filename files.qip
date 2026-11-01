@@ -53,9 +53,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) r
 # Disquetera: u765 de Amstrad_MiST (GPL) con INT y con imagenes raw (tools/gen_u765.py)
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/cpc/u765.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/YM2149.sv]
-set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/lx/lx_sys.sv]
-set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/lx/lx_ms2.sv]
-set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/lx/lx_dma.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/aleste_core.sv]
 set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) rtl/aleste_mist_top.sv]
 set_global_assignment -name VHDL_FILE [file join $::quartus(qip_path) common/mist-modules/dac.vhd]
